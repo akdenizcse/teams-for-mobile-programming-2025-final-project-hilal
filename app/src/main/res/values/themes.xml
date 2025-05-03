@@ -1,0 +1,18 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme using MaterialComponents -->
+    <style name="Theme.Recipes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/mercan</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/mercan_light</item>
+
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/purple_500</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Surface and background -->
+        <item name="android:colorBackground">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+    </style>
+</resources>

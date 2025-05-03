@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="green">#4fa853</color>
+    <color name="pink">#e05d5d</color>
+    <color name="orange">#e07c06</color>
+    <color name="colorPrimary">#0000FF</color>
+    <color name="sıcak_mercan">#FF6F61</color>
+    <color name="breakfastColor">#FFCC80</color>   <!-- light orange -->
+    <color name="lunchColor">#90CAF9</color>       <!-- light blue -->
+    <color name="dinnerColor">#CE93D8</color>      <!-- light purple -->
+    <color name="dessertColor">#F48FB1</color>     <!-- light pink -->
+    <color name="veganColor">#A5D6A7</color>       <!-- light green -->
+    <color name="vegetarianColor">#B2DFDB</color>  <!-- light teal -->
+    <color name="glutenFreeColor">#FFF59D</color>  <!-- light yellow -->
+    <color name="snackColor">#80DEEA</color>       <!-- light cyan -->
+    <!-- Brand colors -->
+    <color name="mercan">#FF6F61</color>
+    <color name="mercan_light">#FFCEC5</color>
+    <color name="purple_500">#BB86FC</color>
+
+    <!-- Semantic colors (optional) -->
+    <color name="error">#B00020</color>
+    <color name="onError">#FFFFFF</color>
+
+
+
+
+</resources>

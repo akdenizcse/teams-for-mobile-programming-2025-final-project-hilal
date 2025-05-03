@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.recipes">
+
+    <!-- Permission to allow network calls -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name=".MyApp"
+        android:theme="@style/Theme.Recipes"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Recipes"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true">
+
+        <!-- Entry point -->
+        <activity
+            android:name=".ui.activities.LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- Registration screen -->
+        <activity
+            android:name=".ui.activities.SignupActivity"
+            android:exported="false" />
+
+        <!-- Main UI after login/signup -->
+        <activity
+            android:name=".ui.activities.MainActivity"
+            android:exported="true">
+
+            <!-- Deep‐link filter for recipe URLs -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Adjust host/pathPrefix to match your real domain -->
+                <data
+                    android:scheme="https"
+                    android:host="www.yourdomain.com"
+                    android:pathPrefix="/recipe" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

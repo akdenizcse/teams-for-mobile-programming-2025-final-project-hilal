@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">Recipes</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="recipe_image_desc">Recipe image</string>
+    <string name="delete_item">Delete item</string>
+    <string name="removed_item">Removed “%1$s”</string>
+    <string name="no_items">No items in your shopping list</string>
+    <string name="ingredients_label">Ingredients</string>
+    <string name="recipe_details_title">Recipe Details</string>
+    <string name="follow">Follow</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="directions">Directions</string>
+    <string name="easy">Easy</string>
+    <string name="time_minutes">32 min</string>
+    <string name="calories_kcal">100 kcal</string>
+    <string name="servings">%1$d servings</string>
+    <string name="servings_format">%1$d servings</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="delete">Delete</string>
+    <string name="category_image_desc">Category image</string>
+    <string name="categories">Categories</string>
+    <string name="add_to_shopping_list">Add to shopping list</string>
+    <string name="category_label">%1$s</string>
+    <string name="profile">Profile</string>
+    <string name="email">Email</string>
+    <string name="display_name">Display Name</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="update_success">Profile updated</string>
+    <string name="update_failed">Failed to update profile</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="favorites">Favorites</string>
+    <string name="shopping">Shopping</string>
+    <string name="share_recipe">Share Recipe</string>
+
+
+
+
+
+
+
+
+
+
+
+</resources>
+
+
+

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/homeFragment">
+
+    <!-- Home Fragment -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.recipes.ui.fragments.HomeFragment"
+        android:label=""
+        app:layout="@layout/fragment_home">
+
+        <!-- Home → Search -->
+        <action
+            android:id="@+id/action_home_to_search"
+            app:destination="@id/searchFragment" />
+
+        <!-- Home → Categories with animation -->
+        <action
+            android:id="@+id/action_home_to_categories"
+            app:destination="@id/categoriesFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="category"
+                app:argType="string" />
+        </action>
+
+        <!-- Home → Favorites -->
+        <action
+            android:id="@+id/action_home_to_favorites"
+            app:destination="@id/favoritesFragment" />
+
+        <!-- Home → Shopping List -->
+        <action
+            android:id="@+id/action_home_to_shoppingList"
+            app:destination="@id/shoppingListFragment" />
+    </fragment>
+
+    <!-- Categories Fragment -->
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.example.recipes.ui.fragments.CategoriesFragment"
+        android:label=""
+        app:layout="@layout/fragment_categories">
+
+        <argument
+            android:name="category"
+            app:argType="string"
+            android:defaultValue="" />
+
+        <!-- Pass recipeId instead of full object -->
+        <action
+            android:id="@+id/action_categories_to_recipeDetail"
+            app:destination="@id/recipeDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="recipeId"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
+    <!-- Search Fragment -->
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.recipes.ui.fragments.SearchFragment"
+        android:label=""
+        app:layout="@layout/fragment_search">
+
+        <action
+            android:id="@+id/action_search_to_filters"
+            app:destination="@id/filtersFragment" />
+
+        <!-- Pass recipeId instead of full object -->
+        <action
+            android:id="@+id/action_search_to_recipeDetail"
+            app:destination="@id/recipeDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="recipeId"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
+    <!-- Filters Fragment -->
+    <fragment
+        android:id="@+id/filtersFragment"
+        android:name="com.example.recipes.ui.fragments.FiltersFragment"
+        android:label="Filters"
+        app:layout="@layout/fragment_filters" />
+
+    <!-- Favorites Fragment -->
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.recipes.ui.fragments.FavoritesFragment"
+        android:label=""
+        app:layout="@layout/fragment_favorites">
+        <action
+            android:id="@+id/action_favorites_to_recipeDetail"
+            app:destination="@id/recipeDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- Shopping List Fragment -->
+    <fragment
+        android:id="@+id/shoppingListFragment"
+        android:name="com.example.recipes.ui.fragments.ShoppingListFragment"
+        android:label=""
+        app:layout="@layout/fragment_shopping_list" />
+
+    <!-- Profile Fragment -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.recipes.ui.fragments.ProfileFragment"
+        android:label="@string/profile"
+        app:layout="@layout/fragment_profile" />
+
+    <!-- Recipe Detail Fragment -->
+    <fragment
+        android:id="@+id/recipeDetailFragment"
+        android:name="com.example.recipes.ui.fragments.RecipeDetailFragment"
+        android:label="Recipe Details"
+        app:layout="@layout/fragment_recipe_detail">
+        <argument
+            android:name="recipeId"
+            app:argType="integer" />
+        <!-- Deep Link for recipeId -->
+        <deepLink
+            app:uri="https://www.yourdomain.com/recipe?id={recipeId}" />
+    </fragment>
+
+</navigation>
