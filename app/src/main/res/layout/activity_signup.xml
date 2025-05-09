@@ -1,36 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center"
+    android:id="@+id/signupRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/recipe_bckg">
+    android:background="@drawable/login_bkg"
+    android:fillViewport="true">
 
-    <EditText
-        android:id="@+id/emailEditText"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:layout_marginTop="12dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <!-- Top spacer pushes content down -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2" />
 
-    <Button
-        android:id="@+id/registerButton"
-        android:text="Register"
-        android:layout_marginTop="24dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/orange"/>
-</LinearLayout>
+        <!-- Actual form fields -->
+        <EditText
+            android:id="@+id/signupEmailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/divider"
+            android:textColorHint="@color/divider"
+            android:backgroundTint="@color/divider"
+            android:padding="12dp"/>
 
+        <EditText
+            android:id="@+id/signupPasswordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textColor="@color/divider"
+            android:textColorHint="@color/divider"
+            android:backgroundTint="@color/divider"
+            android:padding="12dp"/>
 
+        <Button
+            android:id="@+id/signupButton"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="Sign Up"
+            android:textColor="@android:color/white" />
 
+        <!-- Bottom spacer leaves some room below -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+</ScrollView>

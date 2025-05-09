@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/sıcak_mercan"/>
+            android:backgroundTint="@color/colorPrimary"/>
 
         <Button
             android:id="@+id/filterButton"
@@ -37,7 +37,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:backgroundTint="@color/sıcak_mercan"/>
+            android:backgroundTint="@color/colorPrimary"/>
     </LinearLayout>
 
     <!-- 3) Progress bar (initially gone) -->

@@ -8,15 +8,33 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.recipes.ui.fragments.HomeFragment"
-        android:label=""
+        android:label="Home"
         app:layout="@layout/fragment_home">
 
-        <!-- Home → Search -->
+        <!-- Home → Search, passing the user’s search term -->
         <action
             android:id="@+id/action_home_to_search"
-            app:destination="@id/searchFragment" />
+            app:destination="@id/searchFragment">
+            <argument
+                android:name="initialQuery"
+                app:argType="string"
+                android:defaultValue="" />
+        </action>
 
-        <!-- Home → Categories with animation -->
+        <!-- Home → Recipe Detail -->
+        <action
+            android:id="@+id/action_home_to_recipeDetail"
+            app:destination="@id/recipeDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="recipeId"
+                app:argType="integer" />
+        </action>
+
+        <!-- Home → Categories -->
         <action
             android:id="@+id/action_home_to_categories"
             app:destination="@id/categoriesFragment"
@@ -38,6 +56,7 @@
         <action
             android:id="@+id/action_home_to_shoppingList"
             app:destination="@id/shoppingListFragment" />
+
     </fragment>
 
     <!-- Categories Fragment -->

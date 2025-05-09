@@ -59,7 +59,7 @@
                     app:chipIcon="@drawable/baseline_star_24"
                     app:chipIconTint="?attr/colorOnSurface"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:backgroundTint="@color/sıcak_mercan"/>
+                    android:backgroundTint="@color/colorPrimary"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/timeChip"
@@ -69,7 +69,7 @@
                     app:chipIcon="@drawable/baseline_timer_24"
                     app:chipIconTint="?attr/colorOnSurface"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:backgroundTint="@color/sıcak_mercan"/>
+                    android:backgroundTint="@color/colorPrimary"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/caloriesChip"
@@ -79,7 +79,7 @@
                     app:chipIcon="@drawable/baseline_local_fire_department_24"
                     app:chipIconTint="?attr/colorOnSurface"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:backgroundTint="@color/sıcak_mercan"/>
+                    android:backgroundTint="@color/colorPrimary"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/servingsChip"
@@ -88,7 +88,7 @@
                     app:chipIcon="@drawable/baseline_dinner_dining_24"
                     app:chipIconTint="?attr/colorOnSurface"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:backgroundTint="@color/sıcak_mercan"/>
+                    android:backgroundTint="@color/colorPrimary"/>
             </LinearLayout>
 
             <!-- 6) Ingredients Card -->

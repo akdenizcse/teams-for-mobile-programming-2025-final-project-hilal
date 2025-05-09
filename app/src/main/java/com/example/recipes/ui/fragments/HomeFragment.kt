@@ -1,72 +1,117 @@
 package com.example.recipes.ui.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.KeyEvent
 import android.view.View
-import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipes.R
-import com.example.recipes.data.model.Category
 import com.example.recipes.databinding.FragmentHomeBinding
 import com.example.recipes.ui.adapters.CategoryAdapter
+import com.example.recipes.ui.adapters.CategoryChipAdapter
+import com.example.recipes.ui.adapters.RecipeAdapter
+import com.example.recipes.viewmodel.HomeViewModel
 import com.google.firebase.auth.FirebaseAuth
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
-    private val auth by lazy { FirebaseAuth.getInstance() }
-
-    private val categories = listOf(
-        Category("Breakfast",   R.drawable.baseline_egg_24),
-        Category("Lunch",       R.drawable.baseline_food_bank_24),
-        Category("Dinner",      R.drawable.baseline_dinner_dining_24),
-        Category("Dessert",     R.drawable.baseline_cake_24),
-        Category("Vegan",       R.drawable.baseline_grass_24),
-        Category("Vegetarian",  R.drawable.baseline_emoji_nature_24),
-        Category("Gluten Free", R.drawable.baseline_grain_24),
-        Category("Snack",       R.drawable.baseline_coffee_24)
-    )
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ) = FragmentHomeBinding.inflate(inflater, container, false)
-        .also { _binding = it }
-        .root
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // hide the default ActionBar on this screen
-        (activity as? AppCompatActivity)?.supportActionBar?.hide()
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentHomeBinding.bind(view)
 
-        // personalized greeting
-        val email = auth.currentUser?.email
-        val name = email
+        // 1) Hide the AppBar and show personalized greeting
+        (activity as? AppCompatActivity)?.supportActionBar?.hide()
+        val name = FirebaseAuth.getInstance()
+            .currentUser
+            ?.displayName
             ?.substringBefore("@")
             ?.replaceFirstChar { it.uppercase() }
             ?: "there"
         binding.greetingTextView.text = "Hi $name"
 
-        // hook up RecyclerView
+        // 2) Wire up search IME/Enter/end-icon to navigate to SearchFragment
+        binding.homeSearchEditText.apply {
+            // IME action "Search"
+            setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    navigateToSearch()
+                    true
+                } else false
+            }
+            // Physical Enter key
+            setOnKeyListener { _, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                    navigateToSearch()
+                    true
+                } else false
+            }
+        }
+        // End-icon tap
+        binding.homeSearchLayout.setEndIconOnClickListener {
+            navigateToSearch()
+        }
+
+        // 3) Static category grid (8 tiles)
         binding.homeCategoriesRecycler.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = CategoryAdapter(categories) { category ->
-                // navigate to the category’s recipe list
+            adapter = CategoryAdapter(viewModel.categories.value ?: emptyList()) { category ->
+                viewModel.onCategorySelected(category.name)
+            }
+        }
+
+        // 4) Horizontal filter‐chips row
+        binding.chipRecycler.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = CategoryChipAdapter(viewModel.categories.value ?: emptyList()) { category ->
+                viewModel.onCategorySelected(category.name)
+            }
+        }
+
+        // 5) Quick & Easy 2-column grid
+        binding.quickEasyRecycler.apply {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            adapter = RecipeAdapter { recipe ->
+                // navigate to detail
                 val action = HomeFragmentDirections
-                    .actionHomeToCategories(category.name)
+                    .actionHomeToRecipeDetail(recipeId = recipe.id)
                 findNavController().navigate(action)
             }
+        }
+
+        // 6) Observe both feeds: initial quickEasy and any searchResults
+        viewModel.quickEasy.observe(viewLifecycleOwner) { list ->
+            (binding.quickEasyRecycler.adapter as RecipeAdapter).submitList(list)
+        }
+        viewModel.searchResults.observe(viewLifecycleOwner) { list ->
+            (binding.quickEasyRecycler.adapter as RecipeAdapter).submitList(list)
+        }
+    }
+
+    private fun navigateToSearch() {
+        val query = binding.homeSearchEditText.text.toString().trim()
+        if (query.isNotBlank()) {
+            val action = HomeFragmentDirections
+                .actionHomeToSearch(initialQuery = query)
+            findNavController().navigate(action)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // restore the ActionBar
+        // restore AppBar
         (activity as? AppCompatActivity)?.supportActionBar?.show()
         _binding = null
     }

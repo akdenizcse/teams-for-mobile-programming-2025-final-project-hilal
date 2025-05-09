@@ -1,35 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- 1) Greeting at top -->
-    <TextView
-        android:id="@+id/greetingTextView"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hi"
-        android:textSize="20sp"
-        android:textColor="?attr/colorOnBackground"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="8dp"/>
+        android:orientation="vertical">
 
-    <!-- 2) Two-column categories grid below greeting -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/homeCategoriesRecycler"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
-        app:layout_constraintTop_toBottomOf="@id/greetingTextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <!-- 1) Greeting -->
+        <TextView
+            android:id="@+id/greetingTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hi there"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- 2) Search bar -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/homeSearchLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:boxBackgroundColor="@android:color/white"
+            app:boxStrokeColor="@color/colorPrimary"
+            app:endIconMode="custom"
+            app:endIconDrawable="@drawable/baseline_search_24"
+            app:endIconContentDescription="@string/search">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/homeSearchEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search any recipe…"
+                android:imeOptions="actionSearch"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 3) Category grid -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/homeCategoriesRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"/>
+
+        <!-- 4) Filter chips -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chipRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <!-- 5) Quick & Easy header -->
+        <TextView
+            android:id="@+id/quickEasyLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quick/Easy"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"/>
+
+        <!-- 6) Quick & Easy grid -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/quickEasyRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,44 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loginRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/recipe_bckg">
-
+    android:background="@drawable/login_bkg">
 
     <EditText
         android:id="@+id/emailEditText"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/divider"
+        android:textColorHint="@color/divider"
+        android:backgroundTint="@color/divider"
         android:padding="12dp"/>
 
     <EditText
         android:id="@+id/passwordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:hint="Password"
         android:inputType="textPassword"
-        android:layout_marginTop="24dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:textColor="@color/divider"
+        android:textColorHint="@color/divider"
+        android:backgroundTint="@color/divider"
         android:padding="12dp"/>
 
+    <!-- Primary filled Log In -->
     <Button
         android:id="@+id/loginButton"
-        android:text="Log In"
-        android:layout_marginTop="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/sıcak_mercan"/>
+        android:layout_marginTop="32dp"
+        style="@style/Widget.MaterialComponents.Button"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="Log In"
+        android:textColor="@color/white"/>
 
-    <TextView
+    <!-- Outline “Or sign up” -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/registerTextView"
-        android:text="Don’t have an account? Register"
-        android:textColor="@color/sıcak_mercan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:text="Or sign up"
+        app:strokeColor="@color/colorPrimary"
+        app:strokeWidth="2dp"
+        android:textColor="@color/colorPrimary"/>
+
 </LinearLayout>

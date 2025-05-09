@@ -35,7 +35,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/baseline_delete_24"
-                app:tint="@color/sıcak_mercan"
+                app:tint="@color/colorPrimary"
                 android:visibility="gone" />
 
             <!-- A simple gradient overlay if you like -->
