@@ -60,13 +60,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             navigateToSearch()
         }
 
-        // 3) Static category grid (8 tiles)
-        binding.homeCategoriesRecycler.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = CategoryAdapter(viewModel.categories.value ?: emptyList()) { category ->
-                viewModel.onCategorySelected(category.name)
-            }
-        }
 
         // 4) Horizontal filter‐chips row
         binding.chipRecycler.apply {

@@ -42,15 +42,6 @@
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- 3) Category grid -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/homeCategoriesRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"/>
-
         <!-- 4) Filter chips -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chipRecycler"
