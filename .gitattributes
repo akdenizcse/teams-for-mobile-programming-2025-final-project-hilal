@@ -1,2 +1,12 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# enforce LF in all text files
+* text=auto eol=lf
+
+# explicitly ensure XML, Kotlin, Java, Gradle, etc. use LF
+*.xml   text eol=lf
+*.kt    text eol=lf
+*.java  text eol=lf
+*.gradle text eol=lf
+*.md    text eol=lf
+*.sh    text eol=lf
