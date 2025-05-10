@@ -1,17 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    <!-- Share icon -->
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/baseline_share_24"
         android:title="@string/share_recipe"
-        app:showAsAction="ifRoom"
-        android:iconTint="@color/sıcak_mercan"/>
+        app:showAsAction="ifRoom"/>
 
+    <!-- Favorite (heart) icon -->
     <item
         android:id="@+id/action_favorite"
         android:icon="@drawable/baseline_favorite_24"
-        android:title="@string/add_to_favorites"
-        app:showAsAction="ifRoom"
-        android:iconTint="@color/sıcak_mercan"/>
+        android:title="@string/favorites"
+        app:showAsAction="ifRoom" />
 </menu>

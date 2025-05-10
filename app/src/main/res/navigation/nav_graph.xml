@@ -8,20 +8,10 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.recipes.ui.fragments.HomeFragment"
-        android:label="Home"
+        android:label=""
         app:layout="@layout/fragment_home">
 
         <!-- Home → Search, passing the user’s search term -->
-        <action
-            android:id="@+id/action_home_to_search"
-            app:destination="@id/searchFragment">
-            <argument
-                android:name="initialQuery"
-                app:argType="string"
-                android:defaultValue="" />
-        </action>
-
-        <!-- Home → Recipe Detail -->
         <action
             android:id="@+id/action_home_to_recipeDetail"
             app:destination="@id/recipeDetailFragment"
@@ -33,6 +23,8 @@
                 android:name="recipeId"
                 app:argType="integer" />
         </action>
+
+
 
         <!-- Home → Categories -->
         <action
@@ -86,29 +78,7 @@
     </fragment>
 
     <!-- Search Fragment -->
-    <fragment
-        android:id="@+id/searchFragment"
-        android:name="com.example.recipes.ui.fragments.SearchFragment"
-        android:label=""
-        app:layout="@layout/fragment_search">
 
-        <action
-            android:id="@+id/action_search_to_filters"
-            app:destination="@id/filtersFragment" />
-
-        <!-- Pass recipeId instead of full object -->
-        <action
-            android:id="@+id/action_search_to_recipeDetail"
-            app:destination="@id/recipeDetailFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right">
-            <argument
-                android:name="recipeId"
-                app:argType="integer" />
-        </action>
-    </fragment>
 
     <!-- Filters Fragment -->
     <fragment
@@ -150,12 +120,10 @@
     <fragment
         android:id="@+id/recipeDetailFragment"
         android:name="com.example.recipes.ui.fragments.RecipeDetailFragment"
-        android:label="Recipe Details"
         app:layout="@layout/fragment_recipe_detail">
         <argument
             android:name="recipeId"
             app:argType="integer" />
-        <!-- Deep Link for recipeId -->
         <deepLink
             app:uri="https://www.yourdomain.com/recipe?id={recipeId}" />
     </fragment>

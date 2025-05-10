@@ -5,17 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- 1) Top AppBar with back arrow -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:navigationIcon="@drawable/baseline_arrow_back_24"
-        app:title="@string/recipe_details_title"
-        app:titleTextColor="@android:color/white" />
+        app:menu="@menu/menu_recipe_detail"
+        app:title=""
+        android:backgroundTint="@color/white" />
 
-    <!-- 2) Scrollable content under the toolbar -->
+    <!-- Scrollable content below the AppBar -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- 3) Header image -->
+            <!-- Recipe image -->
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
@@ -35,7 +34,7 @@
                 android:scaleType="centerCrop"
                 android:contentDescription="@string/recipe_image_desc" />
 
-            <!-- 4) Recipe Title -->
+            <!-- Title -->
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
@@ -44,7 +43,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <!-- 5) Stats row with Chips -->
+            <!-- Stats chips row -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -53,45 +52,45 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/difficultyChip"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     app:chipIcon="@drawable/baseline_star_24"
-                    app:chipIconTint="?attr/colorOnSurface"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:backgroundTint="@color/colorPrimary"/>
+                    android:backgroundTint="@color/cardview_dark_background"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="8dp"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/timeChip"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     app:chipIcon="@drawable/baseline_timer_24"
-                    app:chipIconTint="?attr/colorOnSurface"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:backgroundTint="@color/colorPrimary"/>
+                    android:backgroundTint="@color/cardview_dark_background"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="8dp"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/caloriesChip"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     app:chipIcon="@drawable/baseline_local_fire_department_24"
-                    app:chipIconTint="?attr/colorOnSurface"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:backgroundTint="@color/colorPrimary"/>
+                    android:backgroundTint="@color/cardview_dark_background"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="8dp"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/servingsChip"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:chipIcon="@drawable/baseline_dinner_dining_24"
-                    app:chipIconTint="?attr/colorOnSurface"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:backgroundTint="@color/colorPrimary"/>
+                    android:backgroundTint="@color/cardview_dark_background"
+                    android:textColor="@color/white"
+                    app:chipIcon="@drawable/baseline_dinner_dining_24"/>
             </LinearLayout>
 
-            <!-- 6) Ingredients Card -->
+            <!-- Ingredients card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,18 +110,17 @@
                         android:layout_height="wrap_content"
                         android:text="@string/ingredients"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                        android:layout_marginBottom="8dp" />
+                        android:layout_marginBottom="8dp"/>
 
-                    <!-- ▶️ Replaced TextView with RecyclerView for ingredients ▶️ -->
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/ingredientsRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
+                        android:nestedScrollingEnabled="false"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 7) Directions Card -->
+            <!-- Directions card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -142,25 +140,25 @@
                         android:layout_height="wrap_content"
                         android:text="@string/directions"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                        android:layout_marginBottom="8dp" />
+                        android:layout_marginBottom="8dp"/>
 
                     <TextView
                         android:id="@+id/instructions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- 8) Centered ProgressBar for loading details -->
+    <!-- Progress spinner -->
     <ProgressBar
         android:id="@+id/detailProgressBar"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,9 +7,9 @@
     android:padding="16dp">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <!-- 1) Greeting -->
         <TextView
@@ -39,33 +39,24 @@
                 android:layout_height="wrap_content"
                 android:hint="Search any recipe…"
                 android:imeOptions="actionSearch"
-                android:inputType="text" />
+                android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- 4) Filter chips -->
+        <!-- 3) Filter chips -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chipRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:clipToPadding="false"
+            android:backgroundTint="@color/colorPrimary"/>
 
-        <!-- 5) Quick & Easy header -->
-        <TextView
-            android:id="@+id/quickEasyLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Quick/Easy"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="24dp"/>
-
-        <!-- 6) Quick & Easy grid -->
+        <!-- 4) Recipes grid -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/quickEasyRecycler"
+            android:id="@+id/recipesRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"/>
     </LinearLayout>

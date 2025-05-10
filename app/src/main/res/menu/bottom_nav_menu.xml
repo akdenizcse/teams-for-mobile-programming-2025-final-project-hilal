@@ -4,13 +4,8 @@
         android:id="@+id/homeFragment"
         android:icon="@drawable/baseline_home_24"
         android:title="@string/home"
-        android:iconTint="@color/colorPrimary"/>
+        android:iconTint="@color/colorPrimary" />
 
-    <item
-        android:id="@+id/searchFragment"
-        android:icon="@drawable/baseline_search_24"
-        android:title="@string/search"
-        android:iconTint="@color/colorPrimary"/>
 
     <!-- REMOVED categoriesFragment -->
 

@@ -12,63 +12,63 @@ class HomeViewModel(
 ) : ViewModel() {
 
     // 1) Eight static categories
-    private val _categories = MutableLiveData<List<Category>>(
-        listOf(
-            Category("Breakfast",   R.drawable.baseline_egg_24),
-            Category("Lunch",       R.drawable.baseline_food_bank_24),
-            Category("Dinner",      R.drawable.baseline_dinner_dining_24),
-            Category("Dessert",     R.drawable.baseline_cake_24),
-            Category("Vegan",       R.drawable.baseline_grass_24),
-            Category("Vegetarian",  R.drawable.baseline_emoji_nature_24),
-            Category("Gluten Free", R.drawable.baseline_grain_24),
-            Category("Snack",       R.drawable.baseline_coffee_24)
-        )
+    private val _categories = listOf(
+        Category("Breakfast",   R.drawable.baseline_egg_24),
+        Category("Lunch",       R.drawable.baseline_food_bank_24),
+        Category("Dinner",      R.drawable.baseline_dinner_dining_24),
+        Category("Dessert",     R.drawable.baseline_cake_24),
+        Category("Vegan",       R.drawable.baseline_grass_24),
+        Category("Vegetarian",  R.drawable.baseline_emoji_nature_24),
+        Category("Gluten Free", R.drawable.baseline_grain_24),
+        Category("Snack",       R.drawable.baseline_coffee_24)
     )
-    val categories: LiveData<List<Category>> = _categories
+    val categories: LiveData<List<Category>> = MutableLiveData(_categories)
 
-    // 2) “Quick & Easy” feed
-    private val _quickEasy = MutableLiveData<List<Recipe>>(emptyList())
-    val quickEasy: LiveData<List<Recipe>> = _quickEasy
+    // 2) Internal feeds
+    private val _quickEasy   = MutableLiveData<List<Recipe>>(emptyList())
+    private val _searchQuery = MutableLiveData<String>("")
 
-    // 3) Search‐from‐home results
-    private val _searchResults = MutableLiveData<List<Recipe>>(emptyList())
-    val searchResults: LiveData<List<Recipe>> = _searchResults
+    // 3) Exposed “recipes” stream: if search query blank → quickEasy, else → search results
+    val recipes: LiveData<List<Recipe>> = _searchQuery.switchMap { q ->
+        if (q.isBlank()) {
+            _quickEasy
+        } else {
+            liveData {
+                val list = runCatching {
+                    repo.searchRecipes(query = q, number = 10)
+                }.getOrNull() ?: emptyList()
+                emit(list)
+            }
+        }
+    }
 
     init {
         loadQuickEasy()
     }
 
-    /** Initial or “Explore” refresh */
+    /** Load default “quick & easy” recipes. */
     fun loadQuickEasy() {
         viewModelScope.launch {
-            runCatching {
+            val list = runCatching {
                 repo.searchRecipes(query = "quick easy", number = 6)
-            }.onSuccess { _quickEasy.value = it }
-                .onFailure { _quickEasy.value = emptyList() }
+            }.getOrDefault(emptyList())
+            _quickEasy.value = list
         }
     }
 
-    /** Chip or grid‐tile taps */
+    /** Called when user taps a category chip. */
     fun onCategorySelected(name: String) {
+        _searchQuery.value = ""          // clear any search
         viewModelScope.launch {
-            runCatching {
+            val list = runCatching {
                 repo.searchByCategory(name, number = 6)
-            }.onSuccess { _quickEasy.value = it }
-                .onFailure { _quickEasy.value = emptyList() }
+            }.getOrDefault(emptyList())
+            _quickEasy.value = list     // repurpose quickEasy
         }
     }
 
-    /** The home‐screen search box */
+    /** Called when user submits a search. */
     fun searchHomeRecipes(query: String) {
-        if (query.isBlank()) {
-            _searchResults.value = _quickEasy.value  // fallback
-            return
-        }
-        viewModelScope.launch {
-            runCatching {
-                repo.searchRecipes(query = query, number = 10)
-            }.onSuccess { _searchResults.value = it }
-                .onFailure { _searchResults.value = emptyList() }
-        }
+        _searchQuery.value = query
     }
 }

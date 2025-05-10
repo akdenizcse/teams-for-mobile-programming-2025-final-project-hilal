@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:checkable="true"
         android:text="Category"
-        app:chipIconTint="@color/primaryColor"
+        app:chipIconTint="@color/colorPrimary"
         app:checkedIconTint="@color/white"
         app:chipBackgroundColor="@color/white"
         app:checkedIconEnabled="false"/>

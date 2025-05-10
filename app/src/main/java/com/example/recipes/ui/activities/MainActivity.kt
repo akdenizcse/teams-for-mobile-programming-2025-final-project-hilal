@@ -17,29 +17,28 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 1) Use toolbar as ActionBar
+        // 1) Toolbar as ActionBar
         setSupportActionBar(binding.toolbar)
 
-        // 2) Grab NavController
+        // 2) Grab NavController from the FragmentContainerView
         val host = supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navController = host.navController
 
-        // 3) Top-level destinations (no Up arrow)
-        val appBarConfig = AppBarConfiguration(
-            setOf(
-                R.id.homeFragment,
-                R.id.searchFragment,
-                R.id.favoritesFragment,
-                R.id.shoppingListFragment
-            )
+        // 3) Which destinations are top-level (no Up arrow)
+        val topLevel = setOf(
+            R.id.homeFragment,
+            R.id.favoritesFragment,
+            R.id.shoppingListFragment,
+            R.id.profileFragment
         )
+        val appBarConfig = AppBarConfiguration(topLevel)
 
-        // 4) Wire up toolbar & bottom nav
+        // 4) Hook up ActionBar & BottomNav with NavController
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfig)
         binding.bottomNav.setupWithNavController(navController)
 
-        // 5) Ensure tapping Home icon always pops back to homeFragment
+        // 5) Ensure Home tap always pops to root
         binding.bottomNav.setOnItemSelectedListener { item ->
             if (item.itemId == R.id.homeFragment) {
                 navController.popBackStack(R.id.homeFragment, false)
