@@ -435,7 +435,7 @@ public class LibrariesForLibsInPluginsBlock extends AbstractExternalDependencyFa
             public Provider<String> getJunitVersion() { return getVersion("junitVersion"); }
 
             /**
-             * Returns the version associated to this alias: kotlin (2.1.0)
+             * Returns the version associated to this alias: kotlin (1.9.0)
              * If the version is a rich version and that its not expressible as a
              * single version string, then an empty string is returned.
              * This version was declared in catalog libs.versions.toml

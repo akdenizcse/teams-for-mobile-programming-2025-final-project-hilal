@@ -11,6 +11,7 @@ import kotlinx.parcelize.RawValue
  * A Recipe from Spoonacular (or Firestore).
  * All nullable, complex‐type fields are @RawValue so Parcelize will accept them.
  */
+
 @IgnoreExtraProperties
 @Parcelize
 data class Recipe @JvmOverloads constructor(
@@ -46,5 +47,4 @@ data class Recipe @JvmOverloads constructor(
     /** Diet tags like ["vegetarian","gluten free"] */
     @SerializedName("diets")
     val diets: @RawValue List<String>? = null
-
 ) : Parcelable

@@ -1,33 +1,31 @@
+// app/build.gradle.kts
 import java.util.Properties
 
-// 1) load local.properties by hand
+// 1) Load local.properties by hand
 val localProps = Properties().apply {
     load(rootProject.file("local.properties").reader())
 }
 
-// 2) pull your spoonacular key out
+// 2) Pull your Spoonacular key out
 val spoonKey: String = localProps
     .getProperty("SPOONACULAR_API_KEY")
     ?: throw GradleException("SPOONACULAR_API_KEY not found in local.properties")
 
 plugins {
     alias(libs.plugins.androidApplication)
-    // ↓ explicitly pull in kotlin-android @ 1.9.0
+    // explicitly pull in kotlin-android @1.9.0
     id("org.jetbrains.kotlin.android") version "1.9.0"
-    id("kotlin-parcelize")               // this piggy-backs off the kotlin plugin version
+    id("kotlin-parcelize")
     alias(libs.plugins.googleServices)
     id("androidx.navigation.safeargs.kotlin")
-    id ("kotlin-kapt")
+    id("kotlin-kapt")
 }
-
 
 android {
     namespace = "com.example.recipes"
     compileSdk = 34
 
     defaultConfig {
-        buildConfigField("String", "SPOONACULAR_API_KEY", "\"$spoonKey\"")
-
         applicationId = "com.example.recipes"
         minSdk = 24
         targetSdk = 34
@@ -36,6 +34,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        // expose your key to BuildConfig
+        buildConfigField("String", "SPOONACULAR_API_KEY", "\"$spoonKey\"")
     }
 
     buildTypes {
@@ -47,6 +47,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -57,41 +58,46 @@ android {
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true
         dataBinding = true
+        buildConfig = true
     }
-
 }
 
 dependencies {
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
-    implementation ("androidx.appcompat:appcompat:1.6.1")
-    implementation ("com.google.android.material:material:1.8.0")
-    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation ("com.google.android.material:material:1.8.0")
-    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.8.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    // Retrofit + Gson
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+
+    // Coroutines + Play Services
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+
+    // Lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.4.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.4.1")
-    implementation ("androidx.core:core-ktx:1.10.1")
-    implementation ("androidx.core:core:1.10.1")
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.0.0")
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
+
+    // Navigation
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    kapt("com.github.bumptech.glide:compiler:4.15.1")
+
+    // Firebase
     implementation(libs.firebase.auth.ktx)
-    implementation(libs.activity)
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
     implementation(libs.firebase.firestore.ktx)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
 }

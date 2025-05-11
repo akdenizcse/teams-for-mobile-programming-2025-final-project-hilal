@@ -15,6 +15,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+
+
     <!-- 2) Navigation host -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/navHostFragment"
@@ -39,5 +41,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

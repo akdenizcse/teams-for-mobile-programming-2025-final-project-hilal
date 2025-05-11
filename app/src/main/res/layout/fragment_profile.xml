@@ -7,6 +7,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <!-- Dietary Preferences Section -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dietary Preferences"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/colorPrimary"/>
+
+    <CheckBox
+        android:id="@+id/vegetarianCheckBox"
+        android:text="Vegetarian"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <CheckBox
+        android:id="@+id/veganCheckBox"
+        android:text="Vegan"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <CheckBox
+        android:id="@+id/glutenFreeCheckBox"
+        android:text="Gluten Free"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/saveDietaryPreferencesButton"
+        android:text="Save Preferences"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="90dp"/>
+
+
+
     <!-- 1. Email (read-only) -->
     <TextView
         android:id="@+id/emailTextView"
@@ -50,7 +92,9 @@
         android:id="@+id/editSaveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/edit"
+        android:backgroundTint="@color/colorPrimary"
         android:padding="12dp"
-        android:backgroundTint="@color/colorPrimary"/>
+        android:text="@string/edit" />
+
+
 </LinearLayout>

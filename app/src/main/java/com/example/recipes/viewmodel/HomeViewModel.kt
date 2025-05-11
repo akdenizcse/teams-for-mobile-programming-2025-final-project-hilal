@@ -12,7 +12,7 @@ class HomeViewModel(
 ) : ViewModel() {
 
     // 1) Eight static categories
-    private val _categories = listOf(
+    private val categoriesList = listOf(
         Category("Breakfast",   R.drawable.baseline_egg_24),
         Category("Lunch",       R.drawable.baseline_food_bank_24),
         Category("Dinner",      R.drawable.baseline_dinner_dining_24),
@@ -22,21 +22,21 @@ class HomeViewModel(
         Category("Gluten Free", R.drawable.baseline_grain_24),
         Category("Snack",       R.drawable.baseline_coffee_24)
     )
-    val categories: LiveData<List<Category>> = MutableLiveData(_categories)
+    val categories: LiveData<List<Category>> = MutableLiveData(categoriesList)
 
-    // 2) Internal feeds
+    // 2) Backing state for "quick & easy" and for the current search query
     private val _quickEasy   = MutableLiveData<List<Recipe>>(emptyList())
-    private val _searchQuery = MutableLiveData<String>("")
+    private val _searchQuery = MutableLiveData("")
 
-    // 3) Exposed “recipes” stream: if search query blank → quickEasy, else → search results
-    val recipes: LiveData<List<Recipe>> = _searchQuery.switchMap { q ->
-        if (q.isBlank()) {
+    // 3) Exposed recipes: when query is blank → quickEasy feed; else → liveData search
+    val recipes: LiveData<List<Recipe>> = _searchQuery.switchMap { query ->
+        if (query.isBlank()) {
             _quickEasy
         } else {
             liveData {
                 val list = runCatching {
-                    repo.searchRecipes(query = q, number = 10)
-                }.getOrNull() ?: emptyList()
+                    repo.searchRecipes(query = query, number = 10)
+                }.getOrDefault(emptyList())
                 emit(list)
             }
         }
@@ -46,7 +46,7 @@ class HomeViewModel(
         loadQuickEasy()
     }
 
-    /** Load default “quick & easy” recipes. */
+    /** Load default “Quick & Easy” recipes */
     fun loadQuickEasy() {
         viewModelScope.launch {
             val list = runCatching {
@@ -56,19 +56,22 @@ class HomeViewModel(
         }
     }
 
-    /** Called when user taps a category chip. */
+    /**
+     * User tapped one of the category chips.
+     * Clears any pending search and loads that category.
+     */
     fun onCategorySelected(name: String) {
-        _searchQuery.value = ""          // clear any search
+        _searchQuery.value = ""
         viewModelScope.launch {
             val list = runCatching {
                 repo.searchByCategory(name, number = 6)
             }.getOrDefault(emptyList())
-            _quickEasy.value = list     // repurpose quickEasy
+            _quickEasy.value = list
         }
     }
 
-    /** Called when user submits a search. */
+    /** User submitted text in the home‐screen search box */
     fun searchHomeRecipes(query: String) {
-        _searchQuery.value = query
+        _searchQuery.value = query.trim()
     }
 }

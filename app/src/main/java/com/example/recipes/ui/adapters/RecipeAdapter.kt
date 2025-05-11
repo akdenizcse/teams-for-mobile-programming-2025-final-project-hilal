@@ -82,4 +82,11 @@ class RecipeAdapter(
         recipes = newList
         notifyDataSetChanged()
     }
+
+    fun updateData(newData: List<Recipe>) {
+        // Update the dataset in the adapter and notify the recycler view
+        this.recipes = newData
+        notifyDataSetChanged()
+    }
+
 }

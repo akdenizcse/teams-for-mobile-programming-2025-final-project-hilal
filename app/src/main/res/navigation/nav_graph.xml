@@ -8,10 +8,10 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.recipes.ui.fragments.HomeFragment"
-        android:label=""
-        app:layout="@layout/fragment_home">
+        app:layout="@layout/fragment_home"
+        android:label="Home">
 
-        <!-- Home → Search, passing the user’s search term -->
+        <!-- Home → Recipe Detail -->
         <action
             android:id="@+id/action_home_to_recipeDetail"
             app:destination="@id/recipeDetailFragment"
@@ -23,8 +23,6 @@
                 android:name="recipeId"
                 app:argType="integer" />
         </action>
-
-
 
         <!-- Home → Categories -->
         <action
@@ -48,22 +46,21 @@
         <action
             android:id="@+id/action_home_to_shoppingList"
             app:destination="@id/shoppingListFragment" />
-
     </fragment>
 
     <!-- Categories Fragment -->
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.example.recipes.ui.fragments.CategoriesFragment"
-        android:label=""
-        app:layout="@layout/fragment_categories">
+        app:layout="@layout/fragment_categories"
+        android:label="Categories">
 
         <argument
             android:name="category"
             app:argType="string"
             android:defaultValue="" />
 
-        <!-- Pass recipeId instead of full object -->
+        <!-- Categories → Recipe Detail -->
         <action
             android:id="@+id/action_categories_to_recipeDetail"
             app:destination="@id/recipeDetailFragment"
@@ -77,55 +74,59 @@
         </action>
     </fragment>
 
-    <!-- Search Fragment -->
-
-
     <!-- Filters Fragment -->
     <fragment
         android:id="@+id/filtersFragment"
         android:name="com.example.recipes.ui.fragments.FiltersFragment"
-        android:label="Filters"
-        app:layout="@layout/fragment_filters" />
+        app:layout="@layout/fragment_filters"
+        android:label="Filters" />
 
     <!-- Favorites Fragment -->
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.recipes.ui.fragments.FavoritesFragment"
-        android:label=""
-        app:layout="@layout/fragment_favorites">
+        app:layout="@layout/fragment_favorites"
+        android:label="Favorites">
+
+        <!-- Favorites → Recipe Detail -->
         <action
             android:id="@+id/action_favorites_to_recipeDetail"
             app:destination="@id/recipeDetailFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="recipeId"
+                app:argType="integer" />
+        </action>
     </fragment>
 
     <!-- Shopping List Fragment -->
     <fragment
         android:id="@+id/shoppingListFragment"
         android:name="com.example.recipes.ui.fragments.ShoppingListFragment"
-        android:label=""
-        app:layout="@layout/fragment_shopping_list" />
+        app:layout="@layout/fragment_shopping_list"
+        android:label="Shopping List" />
 
     <!-- Profile Fragment -->
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.recipes.ui.fragments.ProfileFragment"
-        android:label="@string/profile"
-        app:layout="@layout/fragment_profile" />
+        app:layout="@layout/fragment_profile"
+        android:label="Profile" />
 
     <!-- Recipe Detail Fragment -->
     <fragment
         android:id="@+id/recipeDetailFragment"
         android:name="com.example.recipes.ui.fragments.RecipeDetailFragment"
-        app:layout="@layout/fragment_recipe_detail">
+        app:layout="@layout/fragment_recipe_detail"
+        android:label="Recipe Details">
         <argument
             android:name="recipeId"
             app:argType="integer" />
+
         <deepLink
             app:uri="https://www.yourdomain.com/recipe?id={recipeId}" />
     </fragment>
-
 </navigation>

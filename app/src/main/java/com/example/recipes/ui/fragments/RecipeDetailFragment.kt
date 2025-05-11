@@ -1,9 +1,12 @@
+// app/src/main/java/com/example/recipes/ui/fragments/RecipeDetailFragment.kt
 package com.example.recipes.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
 import android.text.Html
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -15,9 +18,11 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.recipes.R
-import com.example.recipes.data.model.Ingredient
 import com.example.recipes.data.model.Recipe
+import com.example.recipes.data.model.Review
 import com.example.recipes.data.model.ShoppingItem
+import com.example.recipes.data.repository.FirebaseRepository
+import com.example.recipes.data.repository.RecipeRepository
 import com.example.recipes.databinding.FragmentRecipeDetailBinding
 import com.example.recipes.ui.adapters.IngredientsAdapter
 import com.example.recipes.viewmodel.FavoritesViewModel
@@ -30,116 +35,144 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
     private val binding get() = _binding!!
 
     private val args: RecipeDetailFragmentArgs by navArgs()
-    private val favoritesVM: FavoritesViewModel by activityViewModels()
-    private val shoppingVM: ShoppingListViewModel by activityViewModels()
-    private var currentRecipe: Recipe? = null
+    private val favoritesVM by activityViewModels<FavoritesViewModel>()
+    private val shoppingVM  by activityViewModels<ShoppingListViewModel>()
+    private val reviewRepo = FirebaseRepository()
+    private val recipeRepo = RecipeRepository()
+    private val auth get() = FirebaseAuth.getInstance()
+
+    private var loadedRecipe: Recipe? = null
+    private var existingReview: Review? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View = FragmentRecipeDetailBinding.inflate(inflater, container, false)
-        .also { _binding = it }
-        .root
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentRecipeDetailBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Hide any default action bar
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
 
-        // Toolbar back & menu clicks
-        binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
-        binding.toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_share -> {
-                    currentRecipe?.let { shareRecipe(it) }
-                        ?: Toast.makeText(requireContext(), "Still loading…", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.action_favorite -> {
-                    currentRecipe?.let { addToFavorites(it) }
-                        ?: Toast.makeText(requireContext(), "Still loading…", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                else -> false
-            }
-        }
-
-        // Ingredients RecyclerView
+        // Setup RecyclerView
         val ingAdapter = IngredientsAdapter { ing ->
-            FirebaseAuth.getInstance().currentUser?.uid?.also { uid ->
+            auth.currentUser?.uid?.let { uid ->
                 shoppingVM.add(uid, ShoppingItem(name = ing.original))
-                Toast.makeText(requireContext(),
-                    "Added “${ing.original}” to shopping list", Toast.LENGTH_SHORT).show()
-            } ?: Toast.makeText(requireContext(),
-                "Log in to add to shopping list", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Added to shopping list", Toast.LENGTH_SHORT).show()
+            } ?: Toast.makeText(requireContext(), "Log in to add items", Toast.LENGTH_SHORT).show()
         }
         binding.ingredientsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = ingAdapter
         }
 
-        // Load the recipe details
+        // Show loading
         binding.detailProgressBar.isVisible = true
+
+        // Fetch recipe details and review
         lifecycleScope.launch {
-            val recipe = com.example.recipes.data.repository.RecipeRepository()
-                .getRecipeDetails(args.recipeId)
+            val recipe = recipeRepo.getRecipeDetails(args.recipeId)
             binding.detailProgressBar.isVisible = false
-            if (recipe != null) {
-                currentRecipe = recipe
-                populate(recipe, ingAdapter)
-            } else {
+            if (recipe == null) {
                 Toast.makeText(requireContext(), "Failed to load recipe", Toast.LENGTH_SHORT).show()
+                return@launch
             }
+            loadedRecipe = recipe
+            bindRecipe(recipe, ingAdapter)
+
+            auth.currentUser?.uid?.let { uid ->
+                reviewRepo.getReview(recipe.id, uid)?.also { rev ->
+                    existingReview = rev
+                    // Populate UI with existing review
+                    binding.ratingBar.rating = rev.stars.toFloat()
+                    binding.commentEditText.setText(rev.comment)
+                    binding.ratingBar.setIsIndicator(true)
+                    binding.commentEditText.isEnabled = false
+                    binding.submitRatingButton.visibility = View.GONE
+                    binding.editReviewButton.visibility    = View.VISIBLE
+                }
+            }
+        }
+
+        // Toolbar actions
+        binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            loadedRecipe?.let { r ->
+                when (item.itemId) {
+                    R.id.action_share -> { shareRecipe(r); true }
+                    R.id.action_favorite -> { addToFavorites(r); true }
+                    else -> false
+                }
+            } ?: false
+        }
+
+        // Edit Review flow
+        binding.editReviewButton.setOnClickListener {
+            binding.ratingBar.setIsIndicator(false)
+            binding.commentEditText.isEnabled = true
+            binding.editReviewButton.visibility   = View.GONE
+            binding.submitRatingButton.apply {
+                text = getString(R.string.update_review)
+                visibility = View.VISIBLE
+            }
+        }
+
+        // Submit or Update review
+        binding.submitRatingButton.setOnClickListener {
+            val stars   = binding.ratingBar.rating.toInt().coerceIn(1, 5)
+            val comment = binding.commentEditText.text.toString().trim()
+            auth.currentUser?.uid?.let { uid ->
+                lifecycleScope.launch {
+                    reviewRepo.saveReview(Review(uid, args.recipeId, stars, comment))
+                    binding.ratingBar.apply {
+                        rating = stars.toFloat()
+                        setIsIndicator(true)
+                    }
+                    binding.commentEditText.isEnabled = false
+                    binding.submitRatingButton.visibility = View.GONE
+                    binding.editReviewButton.visibility   = View.VISIBLE
+                    Toast.makeText(requireContext(), "Review saved!", Toast.LENGTH_SHORT).show()
+                }
+            } ?: Toast.makeText(requireContext(), "Log in to leave a review", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun populate(recipe: Recipe, adapter: IngredientsAdapter) {
-        binding.title.text = recipe.title
-        Glide.with(this).load(recipe.image).into(binding.image)
-
-        // Stats chips
-        binding.difficultyChip.text = recipe.diets?.firstOrNull()?.replaceFirstChar { it.uppercase() } ?: "Easy"
-        binding.timeChip.text       = "${recipe.readyInMinutes ?: 0} min"
-        val cals = recipe.nutrition?.nutrients
-            ?.firstOrNull { it.name.equals("Calories", true) }?.amount?.toInt() ?: 0
+    private fun bindRecipe(r: Recipe, ingAdapter: IngredientsAdapter) {
+        Glide.with(this).load(r.image).into(binding.image)
+        binding.title.text = r.title
+        binding.difficultyChip.text = r.diets?.firstOrNull()?.replaceFirstChar { it.uppercase() } ?: "Easy"
+        binding.timeChip.text       = "${r.readyInMinutes ?: 0} min"
+        val cals = r.nutrition?.nutrients?.firstOrNull { it.name.equals("Calories", true) }?.amount?.toInt() ?: 0
         binding.caloriesChip.text   = "$cals kcal"
-        binding.servingsChip.text   = getString(R.string.servings_format, recipe.servings ?: 0)
-
-        // Instructions
-        binding.instructions.text = recipe.instructions
-            ?.let { Html.fromHtml(it, Html.FROM_HTML_MODE_LEGACY) }
-            ?: "No instructions available."
-
-        // Ingredients list
-        val has = recipe.ingredients?.isNotEmpty() == true
-        binding.ingredientsLabel.isVisible           = has
-        binding.ingredientsRecyclerView.isVisible    = has
-        if (has) adapter.submitList(recipe.ingredients!!)
+        binding.servingsChip.text   = getString(R.string.servings_format, r.servings ?: 0)
+        binding.instructions.text   = r.instructions?.let { Html.fromHtml(it, Html.FROM_HTML_MODE_LEGACY) } ?: "No instructions."
+        ingAdapter.submitList(r.ingredients.orEmpty())
+        val has = r.ingredients.orEmpty().isNotEmpty()
+        binding.ingredientsLabel.isVisible        = has
+        binding.ingredientsRecyclerView.isVisible = has
     }
 
-    private fun addToFavorites(recipe: Recipe) {
-        FirebaseAuth.getInstance().currentUser?.uid?.also { uid ->
-            favoritesVM.addFavorite(uid, recipe)
-            Toast.makeText(requireContext(),
-                "Added “${recipe.title}” to favorites", Toast.LENGTH_SHORT).show()
-        } ?: Toast.makeText(requireContext(),
-            "Please log in to save favorites", Toast.LENGTH_SHORT).show()
+    private fun addToFavorites(r: Recipe) {
+        auth.currentUser?.uid?.let { uid ->
+            favoritesVM.addFavorite(uid, r)
+            Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show()
+        } ?: Toast.makeText(requireContext(), "Log in to save favorites", Toast.LENGTH_SHORT).show()
     }
 
-    private fun shareRecipe(recipe: Recipe) {
-        val text = "Check out this recipe: ${recipe.title}\n" +
-                "https://yourdomain.com/recipe?id=${recipe.id}"
-        startActivity(Intent.createChooser(
-            Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, text)
-                type = "text/plain"
-            }, getString(R.string.share_recipe)))
+    private fun shareRecipe(r: Recipe) {
+        val text = "Check out this recipe: ${r.title}\nhttps://yourdomain.com/recipe?id=${r.id}"
+        startActivity(Intent.createChooser(Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, text)
+            type = "text/plain"
+        }, getString(R.string.share_recipe)))
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Restore default action bar
         (activity as? AppCompatActivity)?.supportActionBar?.show()
         _binding = null
     }

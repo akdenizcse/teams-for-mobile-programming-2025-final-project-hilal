@@ -2,19 +2,19 @@
 package com.example.recipes.data.repository
 
 import com.example.recipes.data.model.Recipe
+import com.example.recipes.data.model.Review
 import com.example.recipes.data.model.ShoppingItem
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.WriteBatch
 import kotlinx.coroutines.tasks.await
 
 class FirebaseRepository {
-    private val db           = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
     private val favoritesCol = db.collection("favorites")
     private val shoppingCol  = db.collection("shoppingLists")
+    private val reviewsCol   = db.collection("reviews")
 
-    // —————————————————————————————————————————————————————————————————————————————
-    // Favorites (unchanged)
-    // —————————————————————————————————————————————————————————————————————————————
 
     suspend fun getFavorites(userId: String): List<Recipe> =
         favoritesCol
@@ -101,5 +101,35 @@ class FirebaseRepository {
             }
         }
         batch.commit().await()
+    }
+
+
+    suspend fun getReview(recipeId: Int, userId: String): Review? {
+        val doc = reviewsCol
+            .document("$recipeId-$userId")
+            .get()
+            .await()
+        return doc.toObject(Review::class.java)
+    }
+
+    /** Save or overwrite a user’s review on a recipe */
+    suspend fun saveReview(review: Review) {
+        // use recipeId-userId as the document key
+        val key = "${review.recipeId}-${review.userId}"
+        reviewsCol
+            .document(key)
+            .set(review)          // by default SetOptions.merge() behavior
+            .await()
+    }
+
+
+
+    suspend fun getAllReviewsForRecipe(recipeId: Int): List<Review> {
+        val col = reviewsCol
+            .document(recipeId.toString())
+            .collection("users")
+            .get()
+            .await()
+        return col.toObjects(Review::class.java)
     }
 }
