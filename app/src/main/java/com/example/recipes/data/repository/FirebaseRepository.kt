@@ -104,32 +104,37 @@ class FirebaseRepository {
     }
 
 
-    suspend fun getReview(recipeId: Int, userId: String): Review? {
-        val doc = reviewsCol
-            .document("$recipeId-$userId")
+    /**
+     * Fetch all user reviews for a recipe by querying where recipeId equals the given id.
+     */
+    suspend fun getAllReviewsForRecipe(recipeId: Int): List<Review> {
+        return reviewsCol
+            .whereEqualTo("recipeId", recipeId)
             .get()
             .await()
-        return doc.toObject(Review::class.java)
+            .toObjects(Review::class.java)
     }
 
-    /** Save or overwrite a user’s review on a recipe */
+    /**
+     * Fetch this user’s review for a recipe, or null if none exists.
+     */
+    suspend fun getReview(recipeId: Int, userId: String): Review? {
+        val docId = "${recipeId}-$userId"
+        return reviewsCol
+            .document(docId)
+            .get()
+            .await()
+            .toObject(Review::class.java)
+    }
+
+    /**
+     * Save or overwrite a user’s review on a recipe
+     */
     suspend fun saveReview(review: Review) {
-        // use recipeId-userId as the document key
         val key = "${review.recipeId}-${review.userId}"
         reviewsCol
             .document(key)
-            .set(review)          // by default SetOptions.merge() behavior
+            .set(review)
             .await()
-    }
-
-
-
-    suspend fun getAllReviewsForRecipe(recipeId: Int): List<Review> {
-        val col = reviewsCol
-            .document(recipeId.toString())
-            .collection("users")
-            .get()
-            .await()
-        return col.toObjects(Review::class.java)
     }
 }

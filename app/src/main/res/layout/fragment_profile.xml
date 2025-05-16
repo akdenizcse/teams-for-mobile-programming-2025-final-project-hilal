@@ -1,100 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/profileRoot"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center_horizontal"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profileScroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    tools:context=".ui.fragments.ProfileFragment">
 
-
-    <!-- Dietary Preferences Section -->
-    <TextView
+    <LinearLayout
+        android:id="@+id/profileRoot"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Dietary Preferences"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"
-        android:textColor="@color/colorPrimary"/>
+        android:gravity="center_horizontal">
 
-    <CheckBox
-        android:id="@+id/vegetarianCheckBox"
-        android:text="Vegetarian"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <!-- 1. Display Name -->
+        <TextView
+            android:id="@+id/nameLabelTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/display_name"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
 
-    <CheckBox
-        android:id="@+id/veganCheckBox"
-        android:text="Vegan"
-        android:layout_marginTop="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_name"
+            android:inputType="textPersonName"
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_marginBottom="24dp" />
 
-    <CheckBox
-        android:id="@+id/glutenFreeCheckBox"
-        android:text="Gluten Free"
-        android:layout_marginTop="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/editSaveButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/edit"
+            android:layout_marginBottom="24dp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorPrimary"/>
 
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/saveDietaryPreferencesButton"
-        android:text="Save Preferences"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:layout_marginBottom="90dp"/>
+        <!-- 2. Email -->
+        <TextView
+            android:id="@+id/emailTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/email"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
 
+        <TextView
+            android:id="@+id/emailValueTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="user@example.com"
+            android:layout_marginBottom="32dp" />
 
+        <!-- 3. Dietary Preferences -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dietary_preferences"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginBottom="8dp" />
 
-    <!-- 1. Email (read-only) -->
-    <TextView
-        android:id="@+id/emailTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/email"
-        android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
+        <!-- None first so users know it overrides the rest -->
+        <CheckBox
+            android:id="@+id/noneCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/none"
+            android:layout_marginBottom="8dp" />
 
-    <TextView
-        android:id="@+id/emailValueTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="user@example.com"
-        android:layout_marginBottom="24dp" />
+        <CheckBox
+            android:id="@+id/vegetarianCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vegetarian"
+            android:layout_marginBottom="4dp" />
 
-    <!-- 2. Display name (editable) -->
-    <TextView
-        android:id="@+id/nameLabelTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/display_name"
-        android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
+        <CheckBox
+            android:id="@+id/veganCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vegan"
+            android:layout_marginBottom="4dp" />
 
+        <CheckBox
+            android:id="@+id/glutenFreeCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gluten_free"
+            android:layout_marginBottom="24dp" />
 
+        <!-- 4. Save Preferences -->
+        <Button
+            android:id="@+id/saveDietaryPreferencesButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/save"
+            android:layout_marginBottom="32dp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorPrimary"/>
 
-    <EditText
-        android:id="@+id/nameEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/enter_name"
-        android:inputType="textPersonName"
-        android:enabled="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_marginBottom="24dp" />
+        <!-- 5. Log Out -->
+        <Button
+            android:id="@+id/buttonLogout"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/logout"
+            android:drawableStart="@drawable/baseline_logout_24"
+            android:drawablePadding="8dp"
+            tools:ignore="VectorDrawableCompat"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorPrimary"/>
 
-    <!-- 3. Edit/Save button -->
-    <Button
-        android:id="@+id/editSaveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorPrimary"
-        android:padding="12dp"
-        android:text="@string/edit" />
-
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

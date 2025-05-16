@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/recipes/viewmodel/SearchViewModel.kt
 package com.example.recipes.viewmodel
 
 import androidx.lifecycle.LiveData
@@ -7,24 +6,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recipes.data.model.Recipe
 import com.example.recipes.data.repository.RecipeRepository
+import com.example.recipes.data.storage.PreferencesHelper
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
-    private val repo: RecipeRepository = RecipeRepository()
+    private val repo: RecipeRepository = RecipeRepository(),
+    private val prefs: PreferencesHelper
 ) : ViewModel() {
-    /** Remember last search term so we can re-execute with new filters */
-    var currentQuery: String = ""
 
-    // Recipes stream
-    private val _recipes = MutableLiveData<List<Recipe>>()
-    val recipes: LiveData<List<Recipe>> = _recipes
+    /** Remember last search term so we can re-execute with new diet filter */
+    private var currentQuery: String = ""
 
-    // Loading indicator
+    // — Recipes stream
+    private val _recipes   = MutableLiveData<List<Recipe>>()
+    val recipes: LiveData<List<Recipe>> get() = _recipes
+
+    // — Loading indicator
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    // Error messages
-    private val _error = MutableLiveData<String?>()
+    // — Error messages
+    private val _error     = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
     /** Clear any shown error */
@@ -32,16 +34,22 @@ class SearchViewModel(
         _error.value = null
     }
 
-    /** Plain‐text search */
+    /**
+     * Perform a free-text search, automatically including the user’s
+     * saved diet preference (if any).
+     */
     fun searchRecipes(query: String) {
-        // store the term
-        currentQuery = query
+        currentQuery = query.trim()
+        val dietFilter = prefs.getDietQuery()    // e.g. "vegan" or null
 
         _isLoading.value = true
         viewModelScope.launch {
             try {
-                // use stored query + currentFilters
-                val results = repo.searchRecipes(currentQuery, currentFilters)
+                val results = repo.searchRecipes(
+                    query       = currentQuery,
+                    dietFilters = dietFilter,
+                    number      = 20
+                )
                 _recipes.value = results
             } catch (e: Exception) {
                 _error.value = e.localizedMessage
@@ -51,12 +59,21 @@ class SearchViewModel(
         }
     }
 
-    /** Category‐based search */
+    /**
+     * Perform a category-based search, automatically including the
+     * user’s saved diet preference.
+     */
     fun searchByCategory(category: String, number: Int = 10) {
+        val dietFilter = prefs.getDietQuery()
+
         _isLoading.value = true
         viewModelScope.launch {
             try {
-                val results = repo.searchByCategory(category, number)
+                val results = repo.searchRecipes(
+                    query       = category,
+                    dietFilters = dietFilter,
+                    number      = number
+                )
                 _recipes.value = results
             } catch (e: Exception) {
                 _error.value = e.localizedMessage
@@ -66,14 +83,13 @@ class SearchViewModel(
         }
     }
 
-    /** Current filter string (e.g. "vegetarian, gluten free") */
-    var currentFilters: String? = null
-
-    /** Update filters (could re‐invoke last query if you store it) */
-    fun applyFilters(filters: String) {
-        // 1) Save the filters (null if blank)
-        currentFilters = filters.ifBlank { null }
-        // 2) Immediately re‐invoke the search with whatever query was last used
-        searchRecipes(currentQuery)
+    /**
+     * Re-run the last free-text search (useful if the user changes
+     * their diet preference and wants to refresh results).
+     */
+    fun refreshLastSearch() {
+        if (currentQuery.isNotBlank()) {
+            searchRecipes(currentQuery)
+        }
     }
 }

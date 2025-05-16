@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipes.R
+import com.example.recipes.data.storage.PreferencesHelper
 import com.example.recipes.databinding.FragmentHomeBinding
 import com.example.recipes.ui.adapters.CategoryChipAdapter
 import com.example.recipes.ui.adapters.RecipeAdapter
@@ -22,12 +23,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val binding get() = _binding!!
     private val vm: HomeViewModel by viewModels()
     private lateinit var recipeAdapter: RecipeAdapter
+    private lateinit var prefs: PreferencesHelper
 
     override fun onViewCreated(view: View, saved: Bundle?) {
         super.onViewCreated(view, saved)
         _binding = FragmentHomeBinding.bind(view)
 
-        // 1) Hide AppBar & greet
+        // set up prefs + dietQuery
+        prefs = PreferencesHelper(requireContext())
+        val dietQuery = prefs.getDietQuery()   // e.g. "vegan" or null
+
+
+
+        // 1) Greet
         val name = FirebaseAuth.getInstance().currentUser
             ?.displayName
             ?.substringBefore("@")
@@ -35,7 +43,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             ?: "there"
         binding.greetingTextView.text = "Hi $name"
 
-        // 2) Recipes grid + adapter
+        // 2) Recipes grid
         recipeAdapter = RecipeAdapter { recipe ->
             val action = HomeFragmentDirections
                 .actionHomeToRecipeDetail(recipe.id)
@@ -46,38 +54,49 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             adapter = recipeAdapter
         }
 
-        // 3) Observe unified feed
+        // 3) Observe feed
         vm.recipes.observe(viewLifecycleOwner) { list ->
             recipeAdapter.submitList(list)
         }
 
-        // 4) Search wiring
+        vm.loadQuickEasy(dietQuery)
+
+        // 4) Text search (now passing dietQuery)
         binding.homeSearchEditText.apply {
             setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    vm.searchHomeRecipes(text.toString())
+                    vm.searchHomeRecipes(text.toString(), dietQuery)
                     true
                 } else false
             }
             setOnKeyListener { _, key, ev ->
                 if (key == KeyEvent.KEYCODE_ENTER && ev.action == KeyEvent.ACTION_UP) {
-                    vm.searchHomeRecipes(text.toString())
+                    vm.searchHomeRecipes(text.toString(), dietQuery)
                     true
                 } else false
             }
         }
         binding.homeSearchLayout.setEndIconOnClickListener {
-            vm.searchHomeRecipes(binding.homeSearchEditText.text.toString())
+            vm.searchHomeRecipes(binding.homeSearchEditText.text.toString(), dietQuery)
         }
 
-        // 5) Chips row
+        // 5) Category chips: filter out the 3 diet chips if the user selected them
+        val allCats = vm.categories.value.orEmpty()
+        val filteredCats = allCats.filter { cat ->
+            dietQuery
+                ?.split(",")
+                ?.none { it.trim().equals(cat.name, ignoreCase = true) }
+                ?: true
+        }
         binding.chipRecycler.apply {
             layoutManager = LinearLayoutManager(
-                requireContext(), LinearLayoutManager.HORIZONTAL, false
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
             )
-            adapter = CategoryChipAdapter(vm.categories.value ?: emptyList()) { cat ->
+            adapter = CategoryChipAdapter(filteredCats) { cat ->
                 binding.homeSearchEditText.text?.clear()
-                vm.onCategorySelected(cat.name)
+                vm.fetchByCategory(cat.name, dietQuery)
             }
         }
     }

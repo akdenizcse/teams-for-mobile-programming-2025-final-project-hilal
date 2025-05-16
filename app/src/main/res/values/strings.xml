@@ -40,6 +40,16 @@
     <string name="shopping">Shopping</string>
     <string name="share_recipe">Share Recipe</string>
     <string name="update_review">Update Review</string>
+    <string name="dietary_preferences">Dietary Preferences</string>
+    <string name="none">None</string>
+    <string name="vegetarian">Vegetarian</string>
+    <string name="vegan">Vegan</string>
+    <string name="gluten_free">Gluten-Free</string>
+    <string name="logout">Log Out</string>
+    <string name="apply_filters">Apply Filters</string>
+
+
+
 
 
 

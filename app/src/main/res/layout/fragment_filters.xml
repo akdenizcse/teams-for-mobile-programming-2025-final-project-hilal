@@ -1,43 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="16dp"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/filtersScroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    tools:context=".ui.fragments.FiltersFragment">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
 
+        <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dietary_preferences"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginBottom="12dp" />
+
+
+        <!-- Specific diet options -->
         <CheckBox
             android:id="@+id/vegetarianCheckBox"
-            android:text="Vegetarian"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/vegetarian"
+            android:layout_marginBottom="8dp" />
 
         <CheckBox
             android:id="@+id/veganCheckBox"
-            android:text="Vegan"
-            android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/vegan"
+            android:layout_marginBottom="8dp" />
 
         <CheckBox
             android:id="@+id/glutenFreeCheckBox"
-            android:text="Gluten Free"
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <!-- add more filters as needed -->
-
-        <Button
-            android:id="@+id/applyFiltersButton"
-            android:text="Apply Filters"
-            android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/sıcak_mercan"/>
+            android:text="@string/gluten_free"
+            android:layout_marginBottom="24dp" />
+
+
+
+        <!-- NEW: None option (id must be exactly noneCheckBox) -->
+        <CheckBox
+            android:id="@+id/noneCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/none"
+            android:layout_marginBottom="16dp" />
+        <!-- Apply button -->
+        <Button
+            android:id="@+id/applyFiltersButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/apply_filters"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/white"/>
+
     </LinearLayout>
 </ScrollView>

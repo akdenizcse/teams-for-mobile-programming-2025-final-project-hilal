@@ -24,54 +24,57 @@ class HomeViewModel(
     )
     val categories: LiveData<List<Category>> = MutableLiveData(categoriesList)
 
-    // 2) Backing state for "quick & easy" and for the current search query
-    private val _quickEasy   = MutableLiveData<List<Recipe>>(emptyList())
-    private val _searchQuery = MutableLiveData("")
-
-    // 3) Exposed recipes: when query is blank → quickEasy feed; else → liveData search
-    val recipes: LiveData<List<Recipe>> = _searchQuery.switchMap { query ->
-        if (query.isBlank()) {
-            _quickEasy
-        } else {
-            liveData {
-                val list = runCatching {
-                    repo.searchRecipes(query = query, number = 10)
-                }.getOrDefault(emptyList())
-                emit(list)
-            }
-        }
-    }
+    // Backing LiveData for the recipes to show in the grid
+    private val _recipes = MutableLiveData<List<Recipe>>(emptyList())
+    val recipes: LiveData<List<Recipe>> = _recipes
 
     init {
-        loadQuickEasy()
+        // initial “Quick & Easy” load with no diet filter
+        loadQuickEasy(null)
     }
 
-    /** Load default “Quick & Easy” recipes */
-    fun loadQuickEasy() {
+    /**
+     * Load default “Quick & Easy” recipes,
+     * optionally filtered by diet (e.g. "vegan").
+     */
+    fun loadQuickEasy(diet: String?) {
         viewModelScope.launch {
-            val list = runCatching {
-                repo.searchRecipes(query = "quick easy", number = 6)
-            }.getOrDefault(emptyList())
-            _quickEasy.value = list
+            val list = repo.searchRecipes(
+                query = "quick easy",
+                dietFilters = diet,
+                number = 6
+            )
+            _recipes.postValue(list)
         }
     }
 
     /**
-     * User tapped one of the category chips.
-     * Clears any pending search and loads that category.
+     * User tapped a category chip.
+     * Loads that category name, optionally filtered by diet.
      */
-    fun onCategorySelected(name: String) {
-        _searchQuery.value = ""
+    fun fetchByCategory(category: String, diet: String? = null) {
         viewModelScope.launch {
-            val list = runCatching {
-                repo.searchByCategory(name, number = 6)
-            }.getOrDefault(emptyList())
-            _quickEasy.value = list
+            val list = repo.searchRecipes(
+                query = category,
+                dietFilters = diet,
+                number = 20
+            )
+            _recipes.postValue(list)
         }
     }
 
-    /** User submitted text in the home‐screen search box */
-    fun searchHomeRecipes(query: String) {
-        _searchQuery.value = query.trim()
+    /**
+     * User submitted text in the home‐screen search box.
+     * Performs a search for the text, optionally filtered by diet.
+     */
+    fun searchHomeRecipes(query: String, diet: String? = null) {
+        viewModelScope.launch {
+            val list = repo.searchRecipes(
+                query = query.trim(),
+                dietFilters = diet,
+                number = 20
+            )
+            _recipes.postValue(list)
+        }
     }
 }

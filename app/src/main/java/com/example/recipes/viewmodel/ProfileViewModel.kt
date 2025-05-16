@@ -21,58 +21,75 @@ class ProfileViewModel(
     private val _filteredRecipes = MutableLiveData<List<Recipe>>()
     val filteredRecipes: LiveData<List<Recipe>> = _filteredRecipes
 
-    // Load preferences from SharedPreferences
+    /** Load flags from SharedPreferences into LiveData */
     fun loadPreferences() {
-        val loadedPreferences = preferencesHelper.loadPreferences()
-        _preferences.value = loadedPreferences
-        Log.d("ProfileViewModel", "Preferences loaded: $loadedPreferences")  // Log the loaded preferences
+        val loaded = preferencesHelper.loadPreferences()
+        _preferences.value = loaded
+        Log.d("ProfileViewModel", "Preferences loaded: $loaded")
     }
 
-    // Save dietary preferences and trigger filtering
-    fun savePreferences(vegetarian: Boolean, vegan: Boolean, glutenFree: Boolean) {
-        preferencesHelper.savePreferences(vegetarian, vegan, glutenFree)
+    /**
+     * Persist user choices and trigger a recipe refresh.
+     * @param none        true if the “None” checkbox is selected (overrides the rest)
+     * @param vegetarian  user chose Vegetarian
+     * @param vegan       user chose Vegan
+     * @param glutenFree  user chose Gluten-Free
+     */
+    fun savePreferences(
+        vegetarian: Boolean,
+        vegan: Boolean,
+        glutenFree: Boolean,
+        none: Boolean
+    ) {
+        // 1) Persist all four flags
+        preferencesHelper.savePreferences(
+            vegetarian  = vegetarian,
+            vegan       = vegan,
+            glutenFree  = glutenFree,
+            none        = none
+        )
+        Log.d(
+            "ProfileViewModel",
+            "Saved → none:$none, vegetarian:$vegetarian, vegan:$vegan, glutenFree:$glutenFree"
+        )
 
-        // Log the saved preferences to verify
-        Log.d("ProfileViewModel", "Preferences saved: Vegetarian: $vegetarian, Vegan: $vegan, Gluten-Free: $glutenFree")
-
-        // After saving preferences, trigger recipe filtering
-        searchRecipes(vegetarian, vegan, glutenFree)
+        // 2) Refresh recipe list immediately
+        searchRecipes(none, vegetarian, vegan, glutenFree)
     }
 
-    // Search recipes based on dietary preferences
-
-
-    fun searchRecipes(vegetarian: Boolean, vegan: Boolean, glutenFree: Boolean) {
-        val dietFilters = mutableListOf<String>()
-
-        // Add preferences to the diet filters list
-        if (vegetarian) {
-            dietFilters.add("vegetarian")
+    /**
+     * Query Spoonacular according to current diet flags.
+     * When **none == true**, no diet filter is applied.
+     */
+    private fun searchRecipes(
+        none: Boolean,
+        vegetarian: Boolean,
+        vegan: Boolean,
+        glutenFree: Boolean
+    ) {
+        // Build diet filter string only if `none` is false
+        val filterString = if (none) {
+            null
+        } else {
+            buildList {
+                if (vegetarian)  add("vegetarian")
+                if (vegan)       add("vegan")
+                if (glutenFree)  add("gluten free")
+            }.joinToString(",").ifBlank { null }
         }
-        if (vegan) {
-            dietFilters.add("vegan")
-        }
-        if (glutenFree) {
-            dietFilters.add("glutenFree")
-        }
 
-        // Combine all dietary preferences into one comma-separated string
-        val filterString = dietFilters.joinToString(",")
-        Log.d("ProfileViewModel", "Searching with diet filter: $filterString")  // Log the filter string
+        Log.d("ProfileViewModel", "Searching recipes with diet = $filterString")
 
-        // Fetch the recipes using the filter string
         viewModelScope.launch {
             try {
-                val recipes = recipeRepository.searchRecipes("", dietFilters = filterString)
-                Log.d("ProfileViewModel", "Received recipes: $recipes")  // Log the received recipes
-
-                // Update the filteredRecipes LiveData
+                val recipes = recipeRepository.searchRecipes(
+                    query       = "",
+                    dietFilters = filterString
+                )
                 _filteredRecipes.postValue(recipes)
             } catch (e: Exception) {
-                // Log any errors encountered during the API call
                 Log.e("ProfileViewModel", "Error fetching recipes", e)
             }
         }
     }
-
 }
