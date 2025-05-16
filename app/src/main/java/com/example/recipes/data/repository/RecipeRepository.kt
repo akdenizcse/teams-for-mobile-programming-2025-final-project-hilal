@@ -21,14 +21,13 @@ class RecipeRepository {
 
 
 
-    /** Fetch full details (including nutrition & instructions) for one recipe */
+    /** Full details (nutrition + instructions) for one recipe. */
     suspend fun getRecipeDetails(recipeId: Int): Recipe? = withContext(Dispatchers.IO) {
-        val resp = api.getRecipeInformation(
-            id                 = recipeId,
-            apiKey             = BuildConfig.SPOONACULAR_API_KEY,
-            includeNutrition   = true
-        )
-        resp.body()
+        api.getRecipeInformation(
+            id               = recipeId,
+            apiKey           = BuildConfig.SPOONACULAR_API_KEY,
+            includeNutrition = true
+        ).body()
     }
 
     suspend fun saveReview(review: Review) {
@@ -62,42 +61,40 @@ class RecipeRepository {
         resp.body()?.results.orEmpty()
     }
 
+    
 
+    suspend fun searchRecipes(
+        query: String,
+        dietFilters: String? = null,
+        number: Int = 10
+    ): List<Recipe> = withContext(Dispatchers.IO) {
 
-    suspend fun searchRecipesWithDietaryFilters(query: String, vegetarian: Boolean, vegan: Boolean, glutenFree: Boolean): List<Recipe> {
-        val dietFilters = buildDietQueryString(vegetarian, vegan, glutenFree)
-        return searchRecipes(query, dietFilters)
-    }
-
-    suspend fun searchRecipes(query: String, dietFilters: String? = null, number: Int = 10): List<Recipe> {
-        // Log the URL being requested with diet filters
-        Log.d("RecipeRepository", "Requesting recipes with URL: https://api.spoonacular.com/recipes/complexSearch?apiKey=3294a7df48d04932aa410da3d34b382c&query=$query&diet=$dietFilters&number=$number")
-
-        val resp = api.searchRecipes(
-            apiKey = BuildConfig.SPOONACULAR_API_KEY,
-            query = query,
-            diet = dietFilters,
-            number = number,
-            addInfo = true
+        Log.d(
+            "RecipeRepository",
+            "searchRecipes query='$query' diet='$dietFilters' number=$number"
         )
 
-        return resp.body()?.results.orEmpty()
+        api.searchRecipes(
+            apiKey  = BuildConfig.SPOONACULAR_API_KEY,
+            query   = query,
+            diet    = dietFilters,
+            number  = number,
+            addInfo = true
+        ).body()?.results.orEmpty()
     }
 
 
 
     // Helper function to build the diet filter query string
-    private fun buildDietQueryString(vegetarian: Boolean, vegan: Boolean, glutenFree: Boolean): String? {
-        val filters = mutableListOf<String>()
-
-        if (vegetarian) filters.add("vegetarian")
-        if (vegan) filters.add("vegan")
-        if (glutenFree) filters.add("gluten-free")
-
-        val dietFilterString = if (filters.isNotEmpty()) filters.joinToString(",") else null
-        Log.d("RecipeRepository", "Built diet filter string: $dietFilterString")  // Log the filter string
-        return dietFilterString
-    }
+    fun buildDietQueryString(
+        vegetarian: Boolean,
+        vegan: Boolean,
+        glutenFree: Boolean
+    ): String? = buildList {
+        if (vegetarian)  add("vegetarian")
+        if (vegan)       add("vegan")
+        if (glutenFree)  add("gluten free")
+    }.takeIf { it.isNotEmpty() }?.joinToString(",")
 
 
 
