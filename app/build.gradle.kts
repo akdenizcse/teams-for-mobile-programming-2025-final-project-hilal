@@ -11,6 +11,11 @@ val spoonKey: String = localProps
     .getProperty("SPOONACULAR_API_KEY")
     ?: throw GradleException("SPOONACULAR_API_KEY not found in local.properties")
 
+val placesKey: String = localProps
+    .getProperty("PLACES_API_KEY")
+    ?: throw GradleException("PLACES_API_KEY not found in local.properties")
+
+
 plugins {
     alias(libs.plugins.androidApplication)
     // explicitly pull in kotlin-android @1.9.0
@@ -27,15 +32,18 @@ android {
 
     defaultConfig {
         applicationId = "com.example.recipes"
-        minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        minSdk        = 24
+        targetSdk     = 34
+        versionCode   = 1
+        versionName   = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // expose your key to BuildConfig
+        // expose your keys to BuildConfig
+        // (make sure spoonKey and placesKey are defined in your gradle.properties)
         buildConfigField("String", "SPOONACULAR_API_KEY", "\"$spoonKey\"")
+        buildConfigField("String", "PLACES_API_KEY", "\"$placesKey\"")
+
     }
 
     buildTypes {
@@ -57,11 +65,13 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
-        dataBinding = true
-        buildConfig = true
+        viewBinding  = true
+        dataBinding  = true
+        buildConfig  = true
     }
 }
+
+
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
@@ -87,6 +97,7 @@ dependencies {
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation(libs.activity)
     kapt("com.github.bumptech.glide:compiler:4.15.1")
 
     // Firebase
@@ -99,5 +110,21 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    // Google Play services location & places
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.google.android.libraries.places:places:3.1.0")
+    implementation ("com.google.android.material:material:1.9.0")
+
+    kapt ("com.github.bumptech.glide:compiler:4.15.1")
+
+    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation ("com.squareup.moshi:moshi:1.15.0")
+    implementation ("com.squareup.moshi:moshi-kotlin:1.15.0")
+
+
+    implementation ("com.google.android.libraries.places:places:3.4.0")
+
+
 
 }

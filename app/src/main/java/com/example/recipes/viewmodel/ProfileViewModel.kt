@@ -67,7 +67,7 @@ class ProfileViewModel(
         vegan: Boolean,
         glutenFree: Boolean
     ) {
-        // Build diet filter string only if `none` is false
+        // Build diet filter string only if none is false
         val filterString = if (none) {
             null
         } else {
@@ -93,3 +93,4 @@ class ProfileViewModel(
         }
     }
 }
+

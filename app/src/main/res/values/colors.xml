@@ -20,6 +20,7 @@
     <color name="mercan_light">#FFCEC5</color>
     <color name="purple_500">#BB86FC</color>
 
+
     <!-- Semantic colors (optional) -->
     <color name="error">#B00020</color>
     <color name="onError">#FFFFFF</color>
@@ -45,6 +46,9 @@
     <color name="exploreBannerBg">#4CAF50</color> <!-- soft green -->
     <color name="chipSelectedBg">#E0F2F1</color>   <!-- light teal for selected chip -->
     <color name="chipTextColor">#00796B</color>
+
+    <color name="colorPrimaryDark">#303F9F</color>   <!-- or whatever your theme’s dark primary is -->
+
 
 
 

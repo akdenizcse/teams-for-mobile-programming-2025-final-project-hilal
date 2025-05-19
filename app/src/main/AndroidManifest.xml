@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.recipes" >
+    package="com.example.recipes">
 
-    <!-- Permission to allow network calls -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+
 
     <application
-        android:theme="@style/Theme.Recipes"
         android:name=".MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Recipes"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true" >
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Recipes">
+        <activity
+            android:name=".ui.activities.PaymentActivity"
+            android:exported="false" />
+
+
         <meta-data
             android:name="com.google.android.actions"
-            android:resource="@xml/colors" />
-        <!-- Entry point -->
+            android:resource="@xml/colors" /> <!-- Entry point -->
         <activity
             android:name=".ui.activities.LoginActivity"
-            android:theme="@style/Theme.Recipes"
-            android:exported="true" >
+            android:exported="true"
+            android:theme="@style/Theme.Recipes">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,11 +38,11 @@
             android:exported="false" /> <!-- Main UI after login/signup -->
         <activity
             android:name=".ui.activities.MainActivity"
-            android:theme="@style/Theme.Recipes"
-            android:exported="true" >
+            android:exported="true"
+            android:theme="@style/Theme.Recipes">
 
             <!-- Deep‐link filter for recipe URLs -->
-            <intent-filter android:autoVerify="true" >
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -49,6 +55,10 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.libraries.places.API_KEY"
+            android:value="@string/google_places_key" />
     </application>
 
 </manifest>

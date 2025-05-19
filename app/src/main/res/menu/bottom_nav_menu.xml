@@ -21,10 +21,22 @@
         android:title="@string/shopping"
         android:iconTint="@color/colorPrimary"/>
 
+
+    <item
+        android:id="@+id/ordersFragment"
+        android:icon="@drawable/baseline_shopping_basket_24"
+        android:title="@string/orders"
+        android:iconTint="@color/colorPrimary"/>
+
+
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/baseline_person_24"
         android:title="@string/profile"
         android:iconTint="@color/colorPrimary"/>
+
+
+
+
 
 </menu>

@@ -27,7 +27,7 @@ class CategoryAdapter(
                 ivCategoryImage.setImageResource(category.image)
 
                 // Dynamically tint the icon (e.g. warm mercan)
-                val tintColor = ContextCompat.getColor(root.context, R.color.sıcak_mercan)
+                val tintColor = ContextCompat.getColor(root.context, R.color.colorPrimary)
                 ivCategoryImage.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
 
                 executePendingBindings()

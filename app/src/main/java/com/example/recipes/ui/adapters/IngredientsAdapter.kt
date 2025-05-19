@@ -1,44 +1,40 @@
+// app/src/main/java/com/example/recipes/ui/adapters/IngredientsAdapter.kt
 package com.example.recipes.ui.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.recipes.data.model.Ingredient
-import com.example.recipes.databinding.ItemIngredientBinding
+import com.example.recipes.R
+import com.example.recipes.data.model.IngredientWithPrice
 
 class IngredientsAdapter(
-    private val onAddClick: (Ingredient) -> Unit
+    private val onClick: (IngredientWithPrice) -> Unit
 ) : RecyclerView.Adapter<IngredientsAdapter.VH>() {
 
-    private var items: List<Ingredient> = emptyList()
+    private val data = mutableListOf<IngredientWithPrice>()
 
-    fun submitList(list: List<Ingredient>) {
-        items = list
-        notifyDataSetChanged()
+
+    fun submit(list: List<IngredientWithPrice>) {
+        data.clear(); data.addAll(list); notifyDataSetChanged()
     }
 
-    inner class VH(private val binding: ItemIngredientBinding)
-        : RecyclerView.ViewHolder(binding.root) {
-        fun bind(ing: Ingredient) {
-            // Use the correct ID from your layout (tvIngredientName)
-            binding.tvIngredientName.text = ing.original
-            binding.btnAddIngredient.setOnClickListener {
-                onAddClick(ing)
-            }
+    override fun onCreateViewHolder(p: ViewGroup, t: Int) = VH(
+        LayoutInflater.from(p.context).inflate(R.layout.item_ingredient, p, false)
+    )
+
+    override fun getItemCount() = data.size
+
+    override fun onBindViewHolder(h: VH, i: Int) = h.bind(data[i])
+
+
+
+    inner class VH(v: View) : RecyclerView.ViewHolder(v) {
+        private val name: TextView = v.findViewById(R.id.ingName)
+        fun bind(model: IngredientWithPrice) {
+            name.text = model.name
+            itemView.setOnClickListener { onClick(model) }
         }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val binding = ItemIngredientBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent, false
-        )
-        return VH(binding)
-    }
-
-    override fun getItemCount() = items.size
-
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.bind(items[position])
     }
 }

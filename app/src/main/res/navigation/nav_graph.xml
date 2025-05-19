@@ -74,6 +74,7 @@
         </action>
     </fragment>
 
+
     <!-- Filters Fragment -->
     <fragment
         android:id="@+id/filtersFragment"
@@ -116,6 +117,13 @@
         app:layout="@layout/fragment_profile"
         android:label="Profile" />
 
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.example.recipes.ui.fragments.OrdersFragment"
+        android:label="@string/orders"
+        android:layout="@layout/fragment_orders"/>
+
+
     <!-- Recipe Detail Fragment -->
     <fragment
         android:id="@+id/recipeDetailFragment"
@@ -125,6 +133,22 @@
         <argument
             android:name="recipeId"
             app:argType="integer" />
+
+        <fragment
+            android:id="@+id/cartFragment"
+            android:name="com.example.recipes.ui.fragments.CartFragment"
+            android:label="@string/cart"
+            android:layout="@layout/fragment_cart" />
+
+
+
+
+
+
+
+
+
+
 
         <deepLink
             app:uri="https://www.yourdomain.com/recipe?id={recipeId}" />

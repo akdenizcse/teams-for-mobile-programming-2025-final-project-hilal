@@ -20,6 +20,8 @@
             android:textSize="20sp"
             android:textStyle="bold"/>
 
+
+
         <!-- 2) Search bar -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/homeSearchLayout"

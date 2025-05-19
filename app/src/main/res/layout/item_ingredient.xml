@@ -1,37 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <data />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <!-- ingredient name -->
+    <TextView
+        android:id="@+id/ingName"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:textSize="15sp"/>
 
-        <!-- Ingredient name -->
-        <TextView
-            android:id="@+id/tvIngredientName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnAddIngredient"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <!-- Button to add ingredient -->
-        <ImageButton
-            android:id="@+id/btnAddIngredient"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:contentDescription="@string/add_to_shopping_list"
-            android:src="@drawable/baseline_shopping_cart_24"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:tint="@color/colorPrimary"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+    <!-- add icon (visible hint; optional) -->
+    <ImageView
+        android:id="@+id/ingAddIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/baseline_add_24"
+        app:tint="@color/colorPrimary" />
+</LinearLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical">
+
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <!-- Comma-separated dish names -->
+        <TextView
+            android:id="@+id/orderTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:text="Spaghetti, Salad, Bread"/>
+
+        <!-- Friendly date -->
+        <TextView
+            android:id="@+id/orderDateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="May 12, 2025 at 18:30"
+            android:layout_marginTop="2dp"/>
+
+    </LinearLayout>
+
+    <!-- Total price -->
+    <TextView
+        android:id="@+id/orderTotalText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="€14.00"
+        android:layout_marginStart="12dp"/>
+</LinearLayout>

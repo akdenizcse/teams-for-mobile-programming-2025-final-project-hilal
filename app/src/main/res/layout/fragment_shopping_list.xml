@@ -1,65 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <!-- AppBar + Tabs -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/addItemEditText"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:hint="New item"/>
-
-        <Button
-            android:id="@+id/addItemButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/colorPrimary"/>
-
-        <Button
-            android:id="@+id/selectModeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/colorPrimary"/>
-    </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="16dp">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/shoppingListRecyclerView"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <TextView
-            android:id="@+id/emptyTextView"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No items"
-            android:visibility="gone"
-            android:layout_gravity="center"/>
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabTextColor="@color/colorPrimary"
+            app:tabIndicatorColor="@color/colorPrimary">
+            <com.google.android.material.tabs.TabItem
+                android:text="@string/shopping_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:text="@string/discover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.tabs.TabLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Content beneath tabs -->
+    <FrameLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Shopping List Pane -->
+        <LinearLayout
+            android:id="@+id/shoppingContainer"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/shoppingListRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/emptyTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_items"
+                android:visibility="gone"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/totalTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/total_format"
+                android:textStyle="bold"
+                android:layout_marginTop="1dp"/>
+
+            <Button
+                android:id="@+id/completeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/complete_shopping"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="@color/colorPrimary"/>
+        </LinearLayout>
+
+        <!-- Discover Pane -->
+        <LinearLayout
+            android:id="@+id/discoverContainer"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_find_stores"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/find_stores_near_me"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_gravity="center"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/nearbyStoresRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingTop="8dp"/>
+        </LinearLayout>
     </FrameLayout>
 
-    <Button
-        android:id="@+id/deleteSelectedButton"
-        android:layout_width="match_parent"
+    <!-- FAB anchored to the contentContainer for bottom|end placement -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddItem"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete Selected"
-        android:visibility="gone"
-        android:layout_marginTop="8dp"/>
-</LinearLayout>
+        android:contentDescription="@string/add_item"
+        android:src="@drawable/baseline_add_24"
+        app:tint="@android:color/white"
+        app:layout_anchor="@id/contentContainer"
+        app:layout_anchorGravity="bottom|end"
+        android:layout_margin="16dp"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

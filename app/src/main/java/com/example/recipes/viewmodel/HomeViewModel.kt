@@ -17,9 +17,6 @@ class HomeViewModel(
         Category("Lunch",       R.drawable.baseline_food_bank_24),
         Category("Dinner",      R.drawable.baseline_dinner_dining_24),
         Category("Dessert",     R.drawable.baseline_cake_24),
-        Category("Vegan",       R.drawable.baseline_grass_24),
-        Category("Vegetarian",  R.drawable.baseline_emoji_nature_24),
-        Category("Gluten Free", R.drawable.baseline_grain_24),
         Category("Snack",       R.drawable.baseline_coffee_24)
     )
     val categories: LiveData<List<Category>> = MutableLiveData(categoriesList)

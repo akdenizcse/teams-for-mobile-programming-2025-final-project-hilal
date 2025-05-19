@@ -5,29 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Top AppBar: back, share, favorite icons only -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:backgroundTint="@color/white"
-        app:navigationIcon="@drawable/baseline_arrow_back_24"
-        app:menu="@menu/menu_recipe_detail"
-        app:title="" />
+        app:backgroundTint="@color/colorPrimary"
+        app:titleTextColor="@android:color/white"
+        app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"/>
 
-    <!-- Scrollable content -->
+    <!-- 1) Scrollable recipe content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:padding="16dp">
+        android:padding="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_marginTop="?attr/actionBarSize">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- 1) Recipe image -->
+            <!-- Recipe image -->
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
@@ -35,7 +35,7 @@
                 android:scaleType="centerCrop"
                 android:contentDescription="@string/recipe_image_desc" />
 
-            <!-- 2) Title -->
+            <!-- Title -->
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
@@ -44,7 +44,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <!-- 3) Stats chips -->
+            <!-- Stats chips -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -83,9 +83,8 @@
                     app:chipIcon="@drawable/baseline_dinner_dining_24"/>
             </LinearLayout>
 
-            <!-- ★ Your Rating section -->
+            <!-- Rating & comments -->
             <LinearLayout
-                android:id="@+id/ratingSection"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,9 +94,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Your Rating"
-                    android:textStyle="bold"
-                    android:layout_marginTop="16dp"/>
+                    android:text="@string/your_rating"
+                    android:textStyle="bold"/>
 
                 <RatingBar
                     android:id="@+id/ratingBar"
@@ -108,33 +106,49 @@
                     android:stepSize="1"
                     android:isIndicator="false"/>
 
+
                 <EditText
                     android:id="@+id/commentEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Leave a comment"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/leave_comment"/>
 
                 <Button
                     android:id="@+id/submitRatingButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SUBMIT RATING"
                     android:layout_marginTop="8dp"
+                    android:text="@string/submit_comment"
                     android:backgroundTint="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/commentsHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/comments"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="8dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/commentsRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"/>
+
 
                 <Button
                     android:id="@+id/editReviewButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:text="Edit Review"
-                    android:visibility="gone" />
-
+                    android:text="@string/edit_review"
+                    android:visibility="gone"
+                    android:backgroundTint="@color/colorPrimary"/>
             </LinearLayout>
 
-            <!-- 4) Ingredients Card -->
+            <!-- Ingredients list -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -164,7 +178,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 5) Directions Card -->
+            <!-- Directions -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -192,12 +206,14 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"/>
                 </LinearLayout>
+
+
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Centered ProgressBar -->
+    <!-- Progress spinner -->
     <ProgressBar
         android:id="@+id/detailProgressBar"
         android:layout_width="48dp"
