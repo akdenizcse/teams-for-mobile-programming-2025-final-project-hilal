@@ -124,6 +124,9 @@ dependencies {
 
 
     implementation ("com.google.android.libraries.places:places:3.4.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.google.android.libraries.places:places:2.7.0")
+
 
 
 

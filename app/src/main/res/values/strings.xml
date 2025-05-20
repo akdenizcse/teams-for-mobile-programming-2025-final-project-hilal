@@ -77,7 +77,6 @@
             <string name="submit_payment">Submit Payment</string>
             <string name="order_total_format">Total: $%.2f</string>
             <string name="order_placed">Order placed </string>
-            <string name="enter_card_details">Please enter all card details</string>
             <string name="payment_failed">Payment failed, try again</string>
             <string name="hint_card_number">Card Number</string>
             <string name="hint_expiry">MM/YY</string>
@@ -136,7 +135,19 @@
     <string name="enter_item_name">Enter item name</string>
     <string name="item_name">Item Name:</string>
     <string name="item_price">Item Price:</string>
-    <string name="price_invalid" />
+    <string name="price_invalid">Invalid Price</string>
+    <string name="invalid_food_name">Invalid Food Name</string>
+    <string name="play_services_unavailable"/>
+    <string name="places_unavailable_toast">
+    Google Play services aren’t available, so “Find Stores” is disabled.
+</string>
+
+    <string name="enter_card_details">Please complete all card fields correctly</string>
+    <string name="error_invalid_month">Expiry month must be 01–12</string>
+    <string name="error_invalid_year_format">Expiry year must be two digits</string>
+    <string name="error_expired_card">Card has already expired</string>
+    <string name="error_invalid_expiry_format">Expiry must be in MM/YY format</string>
+    <string name="google_maps_key" />
 
 
 </resources>

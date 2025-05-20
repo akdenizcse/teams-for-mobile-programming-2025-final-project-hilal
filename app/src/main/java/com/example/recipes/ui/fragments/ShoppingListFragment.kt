@@ -32,6 +32,8 @@ import com.example.recipes.ui.activities.PaymentActivity
 import com.example.recipes.ui.adapters.NearbyStoresAdapter
 import com.example.recipes.ui.adapters.ShoppingListAdapter
 import com.example.recipes.viewmodel.ShoppingListViewModel
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -87,36 +89,65 @@ class ShoppingListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
 
-        // Init Places + FusedLocation
-        if (!Places.isInitialized()) {
-            Places.initialize(requireContext(), getString(R.string.google_places_key))
-        }
-        placesClient = Places.createClient(requireContext())
-        fusedClient  = LocationServices.getFusedLocationProviderClient(requireContext())
+        // 0) Provide ViewModel with the full set of valid dish & ingredient names
+        vm.setValidItems(
+            setOf(
+                // TODO: fill in your in-app recipe titles and their ingredients here,
+                // e.g. "spaghetti bolognese", "tomato", "beef", "onion", …
+            )
+        )
 
-        // Tabs → switch panes
-        binding.tabLayout.addOnTabSelectedListener(object :
-            TabLayout.OnTabSelectedListener {
+        // 1) Check for Google Play services (disable find-stores if missing)
+        val gmsStatus = GoogleApiAvailability
+            .getInstance()
+            .isGooglePlayServicesAvailable(requireContext())
+        val hasGms = gmsStatus == ConnectionResult.SUCCESS
+        if (!hasGms) {
+            binding.btnFindStores.isEnabled = false
+            binding.btnFindStores.alpha     = 0.5f
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.places_unavailable_toast),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
+        // 2) Init Places & fused location if available
+        if (hasGms) {
+            if (!Places.isInitialized()) {
+                Places.initialize(requireContext(), getString(R.string.google_places_key))
+            }
+            placesClient = Places.createClient(requireContext())
+            fusedClient  = LocationServices.getFusedLocationProviderClient(requireContext())
+        }
+
+        // 3) Tabs → switch panes & toggle FAB visibility
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                if (tab.position == 0) showShoppingPane() else showDiscoverPane()
+                if (tab.position == 0) {
+                    showShoppingPane()
+                    binding.fabAddItem.isVisible = true
+                } else {
+                    showDiscoverPane()
+                    binding.fabAddItem.isVisible = false
+                }
             }
             override fun onTabUnselected(tab: TabLayout.Tab) = Unit
             override fun onTabReselected(tab: TabLayout.Tab) = Unit
         })
         binding.tabLayout.getTabAt(0)?.select()
 
-        // Shopping-list RecyclerView
+        // 4) RecyclerViews
         binding.shoppingListRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter       = shoppingAdapter
         }
-        // Discover RecyclerView
         binding.nearbyStoresRecycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter       = nearbyAdapter
         }
 
-        // Observe shopping list
+        // 5) Observe shopping list and total price
         vm.items.observe(viewLifecycleOwner) { list ->
             shoppingAdapter.submitList(list)
             binding.emptyTextView.isVisible = list.isEmpty()
@@ -125,7 +156,7 @@ class ShoppingListFragment : Fragment() {
             binding.totalTextView.text = getString(R.string.total_format, total)
         }
 
-        // Complete → Payment flow
+        // 6) “Complete” button → payment activity
         binding.completeButton.setOnClickListener {
             val items = vm.items.value.orEmpty()
             if (items.isEmpty()) {
@@ -135,8 +166,16 @@ class ShoppingListFragment : Fragment() {
             }
         }
 
-        // Find stores
+        // 7) “Find Stores” click
         binding.btnFindStores.setOnClickListener {
+            if (!hasGms) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.places_unavailable_toast),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -148,30 +187,21 @@ class ShoppingListFragment : Fragment() {
             }
         }
 
-        // — NEW: FAB manual entry —
-        binding.fabAddItem.setOnClickListener {
-            showAddItemDialog()
-        }
+        // 8) FAB → manual entry dialog
+        binding.fabAddItem.setOnClickListener { showAddItemDialog() }
 
-        // Load shopping list
-        vm.load(auth.currentUser!!.uid)
+        // 9) Load the user’s shopping list
+        auth.currentUser?.uid?.let { vm.load(it) }
 
-        // Back-gesture override
+        // 10) Override back-gesture
         requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
+            viewLifecycleOwner, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     findNavController().navigateUp()
                 }
             }
         )
-
-        binding.fabAddItem.setOnClickListener {
-            showAddItemDialog()
-        }
     }
-
-
 
     private fun showShoppingPane() {
         binding.shoppingContainer.isVisible  = true
@@ -182,9 +212,6 @@ class ShoppingListFragment : Fragment() {
         binding.discoverContainer.isVisible = true
     }
 
-    /** Show AlertDialog with EditText to add a manual item. */
-
-
     private fun showAddItemDialog() {
         val ctx = requireContext()
         val dialogView = layoutInflater.inflate(R.layout.add_item, null)
@@ -194,18 +221,18 @@ class ShoppingListFragment : Fragment() {
             .setTitle(R.string.add_item)
             .setView(dialogView)
             .setPositiveButton(android.R.string.ok) { _, _ ->
-                val name = nameInput.text.toString().trim()
-                if (name.isEmpty()) {
-                    Toast.makeText(ctx, R.string.name_empty, Toast.LENGTH_SHORT).show()
+                val raw = nameInput.text.toString().trim()
+                val key = raw.lowercase(Locale.ROOT)
+                // Only allow names present in the validItems set
+                if (vm.validItems.value?.contains(key) != true) {
+                    Toast.makeText(ctx, R.string.invalid_food_name, Toast.LENGTH_SHORT).show()
                 } else {
-                    // assign random price between 1 and 6
-                    val price = Random.nextDouble(1.0, 6.0).let {
-                        // round to two decimals
-                        String.format(Locale.getDefault(), "%.2f", it).toDouble()
-                    }
+                    // Assign a random price between 1 and 6
+                    val price = Random.nextDouble(1.0, 6.0)
+                        .let { String.format(Locale.getDefault(), "%.2f", it).toDouble() }
 
                     auth.currentUser?.uid?.let { uid ->
-                        vm.addWithPrice(uid, ShoppingItem(name = name, price = price))
+                        vm.addWithPrice(uid, ShoppingItem(name = raw, price = price))
                         Toast.makeText(
                             ctx,
                             getString(R.string.added_to_shopping_list),
@@ -220,14 +247,12 @@ class ShoppingListFragment : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun fetchNearbyStores() {
-        // 1) Guard permission
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) return
 
-        // 2) Request a fresh, high-accuracy location
         fusedClient.getCurrentLocation(
             Priority.PRIORITY_HIGH_ACCURACY,
             CancellationTokenSource().token
@@ -235,41 +260,22 @@ class ShoppingListFragment : Fragment() {
             if (loc != null) {
                 fetchFromWebService(loc)
             } else {
-                // Fallback only if that fails
                 fallbackLocation()?.let { fetchFromWebService(it) }
-                    ?: Toast.makeText(requireContext(),
+                    ?: Toast.makeText(
+                        requireContext(),
                         "Unable to determine location",
                         Toast.LENGTH_SHORT
                     ).show()
             }
         }.addOnFailureListener { e ->
-            // In case of broker or other error, fall back
             fallbackLocation()?.let { fetchFromWebService(it) }
-                ?: Toast.makeText(requireContext(),
+                ?: Toast.makeText(
+                    requireContext(),
                     "Location error: ${e.localizedMessage}",
                     Toast.LENGTH_SHORT
                 ).show()
         }
     }
-
-
-
-    private fun doFallback() {
-        fallbackLocation()?.let { loc ->
-            Toast.makeText(
-                requireContext(),
-                "Fallback location: ${"%.5f".format(loc.latitude)}, ${"%.5f".format(loc.longitude)}",
-                Toast.LENGTH_SHORT
-            ).show()
-            fetchFromWebService(loc)
-        } ?: Toast.makeText(
-            requireContext(),
-            "Unable to retrieve any location",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-
 
     @SuppressLint("MissingPermission")
     private fun fallbackLocation(): Location? {
@@ -285,10 +291,6 @@ class ShoppingListFragment : Fragment() {
             .maxByOrNull { it.accuracy }
     }
 
-    /**
-     * Given a valid Location, query Google Places Nearby Search
-     * and submit sorted results to the adapter.
-     */
     private fun fetchFromWebService(loc: Location) {
         val url = HttpUrl.Builder()
             .scheme("https")
@@ -300,81 +302,68 @@ class ShoppingListFragment : Fragment() {
             .addQueryParameter("key", BuildConfig.PLACES_API_KEY)
             .build()
 
-        val request = Request.Builder().url(url).build()
-        OkHttpClient().newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                requireActivity().runOnUiThread {
-                    Toast.makeText(
-                        requireContext(),
-                        "Network error: ${e.localizedMessage}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val bodyString = response.body?.string().orEmpty()
-
-                requireActivity().runOnUiThread {
-                    // 1) HTTP status check
-                    if (!response.isSuccessful) {
+        OkHttpClient().newCall(Request.Builder().url(url).build())
+            .enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    requireActivity().runOnUiThread {
                         Toast.makeText(
                             requireContext(),
-                            "Places API HTTP ${response.code}",
+                            "Network error: ${e.localizedMessage}",
                             Toast.LENGTH_LONG
                         ).show()
-                        return@runOnUiThread
                     }
-
-                    // 2) JSON-level error
-                    val root = JSONObject(bodyString)
-                    if (root.has("error_message")) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Places API error: ${root.optString("error_message")}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        return@runOnUiThread
-                    }
-
-                    // 3) Empty results?
-                    val results = root.optJSONArray("results")
-                    if (results == null || results.length() == 0) {
-                        Toast.makeText(
-                            requireContext(),
-                            "No nearby grocery stores found",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        nearbyAdapter.submitList(emptyList())
-                        return@runOnUiThread
-                    }
-
-                    // 4) Parse & display
-                    val stores = mutableListOf<NearbyStore>()
-                    for (i in 0 until results.length()) {
-                        val obj = results.optJSONObject(i) ?: continue
-                        val name    = obj.optString("name", "")
-                        val address = obj.optString("vicinity", "")
-                        val geo     = obj.optJSONObject("geometry")
-                            ?.optJSONObject("location") ?: continue
-                        val lat     = geo.optDouble("lat")
-                        val lng     = geo.optDouble("lng")
-                        val distance = FloatArray(1).also {
-                            Location.distanceBetween(
-                                loc.latitude, loc.longitude,
-                                lat, lng, it
-                            )
-                        }[0]
-
-                        stores += NearbyStore(name, address, lat, lng, distance)
-                    }
-
-                    nearbyAdapter.submitList(stores.sortedBy { it.distanceMeters })
                 }
-            }
-        })
+                override fun onResponse(call: Call, response: Response) {
+                    val body = response.body?.string().orEmpty()
+                    requireActivity().runOnUiThread {
+                        if (!response.isSuccessful) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Places API HTTP ${response.code}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            return@runOnUiThread
+                        }
+                        val root = JSONObject(body)
+                        if (root.has("error_message")) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Places API error: ${root.optString("error_message")}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            return@runOnUiThread
+                        }
+                        val arr = root.optJSONArray("results") ?: run {
+                            Toast.makeText(
+                                requireContext(),
+                                "No nearby grocery stores found",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            nearbyAdapter.submitList(emptyList())
+                            return@runOnUiThread
+                        }
+                        val stores = mutableListOf<NearbyStore>()
+                        for (i in 0 until arr.length()) {
+                            val obj = arr.optJSONObject(i) ?: continue
+                            val name    = obj.optString("name", "")
+                            val address = obj.optString("vicinity", "")
+                            val locObj  = obj.optJSONObject("geometry")
+                                ?.optJSONObject("location") ?: continue
+                            val lat  = locObj.optDouble("lat")
+                            val lng  = locObj.optDouble("lng")
+                            val dist = FloatArray(1).also {
+                                android.location.Location.distanceBetween(
+                                    loc.latitude, loc.longitude,
+                                    lat, lng, it
+                                )
+                            }[0]
+                            stores += NearbyStore(name, address, lat, lng, dist)
+                        }
+                        nearbyAdapter.submitList(stores.sortedBy { it.distanceMeters })
+                    }
+                }
+            })
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

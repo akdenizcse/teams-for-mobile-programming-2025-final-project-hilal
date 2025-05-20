@@ -3,10 +3,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green">#4fa853</color>
-    <color name="pink">#e05d5d</color>
-    <color name="orange">#e07c06</color>
+    <color name="pink">#0000FF</color>
+    <color name="orange">#0000FF</color>
     <color name="colorPrimary">#0000FF</color>
-    <color name="sıcak_mercan">#FF6F61</color>
+    <color name="sıcak_mercan">#0000FF</color>
     <color name="breakfastColor">#FFCC80</color>   <!-- light orange -->
     <color name="lunchColor">#90CAF9</color>       <!-- light blue -->
     <color name="dinnerColor">#CE93D8</color>      <!-- light purple -->
@@ -16,7 +16,7 @@
     <color name="glutenFreeColor">#FFF59D</color>  <!-- light yellow -->
     <color name="snackColor">#80DEEA</color>       <!-- light cyan -->
     <!-- Brand colors -->
-    <color name="mercan">#FF6F61</color>
+    <color name="mercan">#0000FF</color>
     <color name="mercan_light">#FFCEC5</color>
     <color name="purple_500">#BB86FC</color>
 
@@ -33,8 +33,8 @@
     <color name="signup_background">#FFFFFF</color>
 
     <!-- Primary brand color -->
-    <color name="primaryColor">#FF6F61</color>
-    <color name="primaryColorPressed">#E65B50</color>
+    <color name="primaryColor">#0000FF</color>
+    <color name="primaryColorPressed">#0000FF</color>
 
 
     <!-- EditText hint & text -->
