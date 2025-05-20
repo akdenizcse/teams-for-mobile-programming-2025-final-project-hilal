@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/recipes/viewmodel/OrdersViewModel.kt
 package com.example.recipes.viewmodel
 
 import androidx.lifecycle.*
@@ -15,7 +14,7 @@ class OrdersViewModel(
     private val _orders = MutableLiveData<List<Order>>(emptyList())
     val orders: LiveData<List<Order>> = _orders
 
-    /** Reload past orders for current user */
+    /** Reload past orders */
     fun loadOrders() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         viewModelScope.launch {
@@ -24,35 +23,34 @@ class OrdersViewModel(
     }
 
     /**
-     * Called by PaymentActivity after card-validation.
-     * Collects *shopping-list* items, converts them to CartItems,
-     * saves the order, then clears the shopping list.
+     * Called by PaymentActivity.  Now accepts an address.
      */
     fun createOrder(
         cardNumber: String,
         expiry: String,
         cvv: String,
+        address: String,
         onComplete: (Boolean) -> Unit
     ) {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: run {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+            ?: return onComplete(false)
+
+        // simple client‐side check
+        if (cardNumber.length < 12 || cvv.length < 3) {
             onComplete(false); return
         }
 
-        // very simple validation
-        val ok = cardNumber.length >= 12 && cvv.length >= 3
         viewModelScope.launch {
-            if (!ok) {
+            // 1) get current shopping‐list
+            val shopItems = repo.getShoppingList(uid)
+            if (shopItems.isEmpty()) {
                 onComplete(false); return@launch
             }
 
-            /* ▼ 1) pull items from SHOPPING LIST, not cart */
-            val shopItems = repo.getShoppingList(uid)
-            if (shopItems.isEmpty()) { onComplete(false); return@launch }
-
-            /* ▼ 2) convert them to CartItem for storage in Order */
+            // 2) map to CartItem
             val cartItems = shopItems.map {
                 CartItem(
-                    id       = "",                           // not needed inside order
+                    id       = "",
                     recipeId = it.recipeId?.toIntOrNull() ?: 0,
                     title    = it.name,
                     price    = it.price,
@@ -60,11 +58,15 @@ class OrdersViewModel(
                 )
             }
 
-            /* ▼ 3) build & save order (total auto-computed) */
-            val order = Order(userId = uid, items = cartItems)
+            // 3) build & save order (address included)
+            val order = Order(
+                userId  = uid,
+                items   = cartItems,
+                address = address   // ← newly stored
+            )
             repo.saveOrder(order)
 
-            /* ▼ 4) clear shopping list, reload orders */
+            // 4) clear shopping list & reload orders
             repo.removeShoppingItems(uid, shopItems)
             loadOrders()
             onComplete(true)

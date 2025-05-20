@@ -120,34 +120,48 @@
            <string name="find_stores_near_me">Find Stores Near Me</string>
 
 
-    <string name="location_permission_needed">Location permission is required to discover nearby stores.</string>
+            <string name="location_permission_needed">Location permission is required to discover nearby stores.</string>
             <string name="places_error_generic">Google Places error:</string>
             <string name="google_places_key">AIzaSyAn0i8yRB0npLUkMJc8FjW4L0GrSu1_uOs</string>
-    <string name="order_image_desc" />
-    <string name="avatar_desc" />
-    <string name="recent_favorites" />
-    <string name="save_preferences" />
-    <string name="login_required" />
-    <string name="favorites_count">Favorites Count:</string>
-    <string name="orders_count">Orders Count:</string>
-    <string name="name_empty">Name cannot be empty</string>
-    <string name="add_item">Add Item</string>
-    <string name="enter_item_name">Enter item name</string>
-    <string name="item_name">Item Name:</string>
-    <string name="item_price">Item Price:</string>
-    <string name="price_invalid">Invalid Price</string>
-    <string name="invalid_food_name">Invalid Food Name</string>
-    <string name="play_services_unavailable"/>
-    <string name="places_unavailable_toast">
-    Google Play services aren’t available, so “Find Stores” is disabled.
-</string>
+            <string name="order_image_desc" />
+            <string name="avatar_desc" />
+            <string name="recent_favorites" />
+            <string name="save_preferences" />
+            <string name="login_required" />
+            <string name="favorites_count">Favorites Count:</string>
+            <string name="orders_count">Orders Count:</string>
+            <string name="name_empty">Name cannot be empty</string>
+            <string name="add_item">Add Item</string>
+            <string name="enter_item_name">Enter item name</string>
+            <string name="item_name">Item Name:</string>
+            <string name="item_price">Item Price:</string>
+            <string name="price_invalid">Invalid Price</string>
+            <string name="invalid_food_name">Invalid Food Name</string>
+            <string name="play_services_unavailable"/>
+            <string name="places_unavailable_toast">Google Play services aren’t available, so “Find Stores” is disabled.</string>
+            <string name="enter_card_details">Please complete all card fields correctly</string>
+            <string name="error_invalid_month">Expiry month must be 01–12</string>
+            <string name="error_invalid_year_format">Expiry year must be two digits</string>
+            <string name="error_invalid_expiry_format">Expiry must be in MM/YY format</string>
+            <string name="google_maps_key" />
+            <string name="hint_street">Street</string>
+            <string name="hint_neighborhood">Neighborhood</string>
+            <string name="hint_avenue">Avenue</string>
+            <string name="hint_apartment">Apartment/Building</string>
+            <string name="hint_floor">Floor</string>
+            <string name="hint_apartment_number">Apartment Number</string>
 
-    <string name="enter_card_details">Please complete all card fields correctly</string>
-    <string name="error_invalid_month">Expiry month must be 01–12</string>
-    <string name="error_invalid_year_format">Expiry year must be two digits</string>
-    <string name="error_expired_card">Card has already expired</string>
-    <string name="error_invalid_expiry_format">Expiry must be in MM/YY format</string>
-    <string name="google_maps_key" />
+            <!-- Error shown when any address field is left blank -->
+            <string name="enter_full_address">Please enter your full address before proceeding</string>
+            <string name="error_expired_card">Card expiry must be %1$s or later</string>
+            <string name="enter_address">Delivery Address</string>
+            <string name="hint_apt_floor">Apt/floor/number</string>
+    <string name="location_permission_denied">Location permission denied</string>
+    <string name="address_lookup_failed">Failed to look up address</string>
+    <string name="error_address_incomplete">Please complete all address fields</string>
+    <string name="card_information">Card Information</string>
+
+
 
 
 </resources>

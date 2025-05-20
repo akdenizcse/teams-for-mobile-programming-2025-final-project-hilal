@@ -1,29 +1,22 @@
-// app/src/main/java/com/example/recipes/data/model/Order.kt
 package com.example.recipes.data.model
 
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.google.firebase.firestore.IgnoreExtraProperties
 
+@IgnoreExtraProperties
 data class Order(
-    val id: String = "",              //from firestore
+    val id: String = "",
     val userId: String = "",
     val items: List<CartItem> = emptyList(),
+    val address: String = "",           // ← new
     val timestamp: Long = System.currentTimeMillis()
 ) {
-    /** Grand-total is computed from items */
+    /** Optional convenience: a human‐readable title for dialogs */
+    fun readableTitle(): String {
+        val dt = java.text.DateFormat.getDateTimeInstance().format(timestamp)
+        return "Order on $dt"
+    }
+
+    /** Compute total price on the fly */
     val total: Double
         get() = items.sumOf { it.price }
-
-    /** yyyy-MM-dd HH:mm (existing helper) */
-    fun dateString(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-        return sdf.format(Date(timestamp))
-    }
-
-    /** Friendly title for dialogs or lists */
-    fun readableTitle(): String {
-        val fmt = SimpleDateFormat("dd MMM yyyy • HH:mm", Locale.getDefault())
-        return "Order • ${fmt.format(Date(timestamp))}"
-    }
 }

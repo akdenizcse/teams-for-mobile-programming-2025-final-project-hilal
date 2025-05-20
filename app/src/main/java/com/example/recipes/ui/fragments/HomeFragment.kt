@@ -1,13 +1,16 @@
 package com.example.recipes.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipes.R
@@ -21,7 +24,9 @@ import com.google.firebase.auth.FirebaseAuth
 class HomeFragment : Fragment(R.layout.fragment_home) {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
     private val vm: HomeViewModel by viewModels()
+    private val args: HomeFragmentArgs by navArgs()
     private lateinit var recipeAdapter: RecipeAdapter
     private lateinit var prefs: PreferencesHelper
 
@@ -29,11 +34,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, saved)
         _binding = FragmentHomeBinding.bind(view)
 
+        // handle incoming focusSearch flag
+        if (args.focusSearch) {
+            binding.homeSearchEditText.requestFocus()
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.homeSearchEditText, InputMethodManager.SHOW_IMPLICIT)
+        }
+
         // set up prefs + dietQuery
         prefs = PreferencesHelper(requireContext())
         val dietQuery = prefs.getDietQuery()   // e.g. "vegan" or null
-
-
 
         // 1) Greet
         val name = FirebaseAuth.getInstance().currentUser
@@ -58,10 +68,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         vm.recipes.observe(viewLifecycleOwner) { list ->
             recipeAdapter.submitList(list)
         }
-
         vm.loadQuickEasy(dietQuery)
 
-        // 4) Text search (now passing dietQuery)
+        // 4) Text search
         binding.homeSearchEditText.apply {
             setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -80,7 +89,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             vm.searchHomeRecipes(binding.homeSearchEditText.text.toString(), dietQuery)
         }
 
-        // 5) Category chips: filter out the 3 diet chips if the user selected them
+        // 5) Category chips
         val allCats = vm.categories.value.orEmpty()
         val filteredCats = allCats.filter { cat ->
             dietQuery

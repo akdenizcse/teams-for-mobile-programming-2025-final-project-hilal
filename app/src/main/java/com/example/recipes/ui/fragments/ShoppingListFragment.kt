@@ -54,7 +54,7 @@ class ShoppingListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val auth by lazy { FirebaseAuth.getInstance() }
-    private val vm   by viewModels<ShoppingListViewModel>()
+    private val vm by viewModels<ShoppingListViewModel>()
 
     private val shoppingAdapter by lazy {
         ShoppingListAdapter { item ->
@@ -89,22 +89,21 @@ class ShoppingListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
 
-        // 0) Provide ViewModel with the full set of valid dish & ingredient names
+        // Provide VM with valid items
         vm.setValidItems(
             setOf(
-                // TODO: fill in your in-app recipe titles and their ingredients here,
-                // e.g. "spaghetti bolognese", "tomato", "beef", "onion", …
+                // TODO: populate with your recipe titles and ingredients
+                "cocoa powder", "walnut", "tomato", "beef", "onion" // etc.
             )
         )
 
-        // 1) Check for Google Play services (disable find-stores if missing)
-        val gmsStatus = GoogleApiAvailability
-            .getInstance()
+        // Check Google Play services
+        val status = GoogleApiAvailability.getInstance()
             .isGooglePlayServicesAvailable(requireContext())
-        val hasGms = gmsStatus == ConnectionResult.SUCCESS
+        val hasGms = status == ConnectionResult.SUCCESS
         if (!hasGms) {
             binding.btnFindStores.isEnabled = false
-            binding.btnFindStores.alpha     = 0.5f
+            binding.btnFindStores.alpha = 0.5f
             Toast.makeText(
                 requireContext(),
                 getString(R.string.places_unavailable_toast),
@@ -112,24 +111,22 @@ class ShoppingListFragment : Fragment() {
             ).show()
         }
 
-        // 2) Init Places & fused location if available
+        // Init Places and Location
         if (hasGms) {
             if (!Places.isInitialized()) {
                 Places.initialize(requireContext(), getString(R.string.google_places_key))
             }
             placesClient = Places.createClient(requireContext())
-            fusedClient  = LocationServices.getFusedLocationProviderClient(requireContext())
+            fusedClient = LocationServices.getFusedLocationProviderClient(requireContext())
         }
 
-        // 3) Tabs → switch panes & toggle FAB visibility
+        // Tabs listener
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 if (tab.position == 0) {
-                    showShoppingPane()
-                    binding.fabAddItem.isVisible = true
+                    showShoppingPane(); binding.fabAddItem.isVisible = true
                 } else {
-                    showDiscoverPane()
-                    binding.fabAddItem.isVisible = false
+                    showDiscoverPane(); binding.fabAddItem.isVisible = false
                 }
             }
             override fun onTabUnselected(tab: TabLayout.Tab) = Unit
@@ -137,17 +134,17 @@ class ShoppingListFragment : Fragment() {
         })
         binding.tabLayout.getTabAt(0)?.select()
 
-        // 4) RecyclerViews
+        // RecyclerViews
         binding.shoppingListRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter       = shoppingAdapter
+            adapter = shoppingAdapter
         }
         binding.nearbyStoresRecycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter       = nearbyAdapter
+            adapter = nearbyAdapter
         }
 
-        // 5) Observe shopping list and total price
+        // Observe items
         vm.items.observe(viewLifecycleOwner) { list ->
             shoppingAdapter.submitList(list)
             binding.emptyTextView.isVisible = list.isEmpty()
@@ -156,7 +153,7 @@ class ShoppingListFragment : Fragment() {
             binding.totalTextView.text = getString(R.string.total_format, total)
         }
 
-        // 6) “Complete” button → payment activity
+        // Complete button
         binding.completeButton.setOnClickListener {
             val items = vm.items.value.orEmpty()
             if (items.isEmpty()) {
@@ -166,49 +163,46 @@ class ShoppingListFragment : Fragment() {
             }
         }
 
-        // 7) “Find Stores” click
+        // Find stores
         binding.btnFindStores.setOnClickListener {
-            if (!hasGms) {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.places_unavailable_toast),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return@setOnClickListener
-            }
+            if (!hasGms) return@setOnClickListener
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                fetchNearbyStores()
-            } else {
-                locLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            }
+            ) fetchNearbyStores()
+            else locLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
-        // 8) FAB → manual entry dialog
-        binding.fabAddItem.setOnClickListener { showAddItemDialog() }
+        // FAB dialog
+        binding.fabAddItem.setOnClickListener {
+            val action = ShoppingListFragmentDirections
+                .actionShoppingListFragmentToHomeFragment(focusSearch = true)
+            findNavController().navigate(action)
+        }
 
-        // 9) Load the user’s shopping list
+
+        // Load list
         auth.currentUser?.uid?.let { vm.load(it) }
 
-        // 10) Override back-gesture
+        // Back gesture
         requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     findNavController().navigateUp()
                 }
             }
         )
+
     }
 
     private fun showShoppingPane() {
-        binding.shoppingContainer.isVisible  = true
+        binding.shoppingContainer.isVisible = true
         binding.discoverContainer.isVisible = false
     }
     private fun showDiscoverPane() {
-        binding.shoppingContainer.isVisible  = false
+        binding.shoppingContainer.isVisible = false
         binding.discoverContainer.isVisible = true
     }
 
@@ -222,19 +216,20 @@ class ShoppingListFragment : Fragment() {
             .setView(dialogView)
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 val raw = nameInput.text.toString().trim()
-                val key = raw.lowercase(Locale.ROOT)
-                // Only allow names present in the validItems set
-                if (vm.validItems.value?.contains(key) != true) {
+                val rawLc = raw.lowercase(Locale.ROOT)
+                // match longest valid item in input
+                val match = vm.validItems.value
+                    ?.sortedByDescending { it.length }
+                    ?.firstOrNull { rawLc.contains(it) }
+
+                if (match == null) {
                     Toast.makeText(ctx, R.string.invalid_food_name, Toast.LENGTH_SHORT).show()
                 } else {
-                    // Assign a random price between 1 and 6
                     val price = Random.nextDouble(1.0, 6.0)
                         .let { String.format(Locale.getDefault(), "%.2f", it).toDouble() }
-
                     auth.currentUser?.uid?.let { uid ->
-                        vm.addWithPrice(uid, ShoppingItem(name = raw, price = price))
-                        Toast.makeText(
-                            ctx,
+                        vm.addWithPrice(uid, ShoppingItem(name = match, price = price))
+                        Toast.makeText(ctx,
                             getString(R.string.added_to_shopping_list),
                             Toast.LENGTH_SHORT
                         ).show()
@@ -244,7 +239,6 @@ class ShoppingListFragment : Fragment() {
             .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
-
     @SuppressLint("MissingPermission")
     private fun fetchNearbyStores() {
         if (ActivityCompat.checkSelfPermission(

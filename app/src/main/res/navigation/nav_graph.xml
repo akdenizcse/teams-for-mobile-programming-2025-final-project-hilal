@@ -10,6 +10,10 @@
         android:name="com.example.recipes.ui.fragments.HomeFragment"
         app:layout="@layout/fragment_home"
         android:label="Home">
+        <argument
+            android:name="focusSearch"
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <!-- Home → Recipe Detail -->
         <action
@@ -23,6 +27,8 @@
                 android:name="recipeId"
                 app:argType="integer" />
         </action>
+
+
 
         <!-- Home → Categories -->
         <action
@@ -108,7 +114,13 @@
         android:id="@+id/shoppingListFragment"
         android:name="com.example.recipes.ui.fragments.ShoppingListFragment"
         app:layout="@layout/fragment_shopping_list"
-        android:label="Shopping List" />
+        android:label="Shopping List">
+    <action
+        android:id="@+id/action_shoppingListFragment_to_homeFragment"
+        app:destination="@id/homeFragment" />
+
+    </fragment>
+
 
     <!-- Profile Fragment -->
     <fragment

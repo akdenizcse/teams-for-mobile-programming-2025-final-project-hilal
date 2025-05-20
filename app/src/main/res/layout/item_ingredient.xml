@@ -15,6 +15,15 @@
         android:layout_height="wrap_content"
         android:textSize="15sp"/>
 
+    <!-- ingredient price -->
+    <TextView
+        android:id="@+id/ingPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:paddingEnd="8dp"
+        android:text="$0.00"/>
+
     <!-- add icon (visible hint; optional) -->
     <ImageView
         android:id="@+id/ingAddIcon"

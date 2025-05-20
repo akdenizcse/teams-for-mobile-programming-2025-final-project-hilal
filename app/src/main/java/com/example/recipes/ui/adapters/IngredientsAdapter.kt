@@ -15,9 +15,10 @@ class IngredientsAdapter(
 
     private val data = mutableListOf<IngredientWithPrice>()
 
-
     fun submit(list: List<IngredientWithPrice>) {
-        data.clear(); data.addAll(list); notifyDataSetChanged()
+        data.clear()
+        data.addAll(list)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(p: ViewGroup, t: Int) = VH(
@@ -28,12 +29,13 @@ class IngredientsAdapter(
 
     override fun onBindViewHolder(h: VH, i: Int) = h.bind(data[i])
 
-
-
     inner class VH(v: View) : RecyclerView.ViewHolder(v) {
         private val name: TextView = v.findViewById(R.id.ingName)
+        private val price: TextView = v.findViewById(R.id.ingPrice)
+
         fun bind(model: IngredientWithPrice) {
             name.text = model.name
+            price.text = String.format("$%.2f", model.price)
             itemView.setOnClickListener { onClick(model) }
         }
     }

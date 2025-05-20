@@ -10,7 +10,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Card Number: exactly up to 16 digits -->
+        <!-- ADDRESS SECTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_address"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/black"/>
+
+        <EditText
+            android:id="@+id/etStreet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_street"/>
+
+        <EditText
+            android:id="@+id/etNeighborhood"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_neighborhood"/>
+
+        <EditText
+            android:id="@+id/etApartment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_apartment"/>
+
+        <EditText
+            android:id="@+id/etFloor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_floor"
+            android:layout_marginBottom="70dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/card_information"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/black"/>
+
+        <!-- CARD DETAILS SECTION -->
         <EditText
             android:id="@+id/cardNumberEditText"
             android:layout_width="match_parent"
@@ -20,7 +62,6 @@
             android:digits="0123456789"
             android:maxLength="16"/>
 
-        <!-- Expiry: MM/YY (5 chars including slash) -->
         <EditText
             android:id="@+id/expiryEditText"
             android:layout_width="match_parent"
@@ -30,7 +71,6 @@
             android:digits="0123456789/"
             android:maxLength="5"/>
 
-        <!-- CVV: up to 3 digits -->
         <EditText
             android:id="@+id/cvvEditText"
             android:layout_width="match_parent"
@@ -45,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/submit_payment"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:backgroundTint="@color/colorPrimary"/>
     </LinearLayout>
 </ScrollView>
