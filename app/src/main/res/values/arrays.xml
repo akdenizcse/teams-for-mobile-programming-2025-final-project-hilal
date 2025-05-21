@@ -1,0 +1,11 @@
+<resources>
+    <string-array name="ingredient_units">
+        <item>kg</item>
+        <item>g</item>
+        <item>ml</item>
+        <item>cup</item>
+        <item>tbsp</item>
+        <item>tsp</item>
+        <!-- add more as needed -->
+    </string-array>
+</resources>

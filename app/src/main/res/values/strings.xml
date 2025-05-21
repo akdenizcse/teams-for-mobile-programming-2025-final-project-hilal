@@ -160,7 +160,11 @@
     <string name="address_lookup_failed">Failed to look up address</string>
     <string name="error_address_incomplete">Please complete all address fields</string>
     <string name="card_information">Card Information</string>
+    <string name="hint_quantity" />
+    <string name="choose_qty_unit">Choose quantity / unit for %1$s</string>
 
+
+    <string name="reply_to_user">\u0040%1$s </string>
 
 
 

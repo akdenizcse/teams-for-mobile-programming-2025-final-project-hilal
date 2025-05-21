@@ -30,38 +30,11 @@ class RecipeRepository {
         ).body()
     }
 
-    suspend fun saveReview(review: Review) {
-        // e.g. "42_user123"
-        val docId = "${review.recipeId}_${review.userId}"
-        reviewsCol
-            .document(docId)
-            .set(review, SetOptions.merge())
-            .await()
-    }
 
     /**
      * Fetch this user’s review for a recipe, or null if none exists.
      */
-    suspend fun getReview(recipeId: Int, userId: String): Review? {
-        val docId = "${recipeId}_$userId"
-        return reviewsCol
-            .document(docId)
-            .get()
-            .await()
-            .toObject(Review::class.java)
-    }
 
-    suspend fun searchByCategory(category: String, number: Int = 10): List<Recipe> = withContext(Dispatchers.IO) {
-        val resp: Response<RecipeResponse> = api.searchRecipes(
-            apiKey = BuildConfig.SPOONACULAR_API_KEY,
-            query  = "",
-            type   = category.lowercase(),
-            number = number
-        )
-        resp.body()?.results.orEmpty()
-    }
-
-    
 
     suspend fun searchRecipes(
         query: String,
@@ -83,19 +56,13 @@ class RecipeRepository {
         ).body()?.results.orEmpty()
     }
 
-
-
-    // Helper function to build the diet filter query string
-    fun buildDietQueryString(
-        vegetarian: Boolean,
-        vegan: Boolean,
-        glutenFree: Boolean
-    ): String? = buildList {
-        if (vegetarian)  add("vegetarian")
-        if (vegan)       add("vegan")
-        if (glutenFree)  add("gluten free")
-    }.takeIf { it.isNotEmpty() }?.joinToString(",")
-
+    // In any suspend repository method (e.g. RecipeRepository):
+    suspend fun safeGetRecipeDetails(recipeId: Int): Result<Recipe> = withContext(Dispatchers.IO) {
+        runCatching {
+            val response = api.getRecipeInformation(recipeId, BuildConfig.SPOONACULAR_API_KEY, true)
+            response.body() ?: throw IllegalStateException("Empty body")
+        }
+    }
 
 
 }

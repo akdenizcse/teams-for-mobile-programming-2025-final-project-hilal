@@ -34,7 +34,7 @@
                 android:padding="12dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/delete"
-                android:src="@drawable/baseline_delete_24"
+                android:src="@drawable/baseline_heart_broken_24"
                 app:tint="@color/colorPrimary"
                 android:visibility="gone" />
 

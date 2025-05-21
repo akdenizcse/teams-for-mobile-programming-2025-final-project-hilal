@@ -89,6 +89,7 @@ class ShoppingListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
 
+
         // Provide VM with valid items
         vm.setValidItems(
             setOf(

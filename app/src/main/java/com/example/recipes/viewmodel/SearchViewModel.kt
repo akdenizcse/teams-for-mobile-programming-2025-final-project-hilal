@@ -14,33 +14,23 @@ class SearchViewModel(
     private val prefs: PreferencesHelper
 ) : ViewModel() {
 
-    /** Remember last search term so we can re-execute with new diet filter */
     private var currentQuery: String = ""
-
-    // — Recipes stream
     private val _recipes   = MutableLiveData<List<Recipe>>()
-    val recipes: LiveData<List<Recipe>> get() = _recipes
+    val recipes: LiveData<List<Recipe>> = _recipes
 
-    // — Loading indicator
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    // — Error messages
     private val _error     = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    /** Clear any shown error */
     fun clearError() {
         _error.value = null
     }
 
-    /**
-     * Perform a free-text search, automatically including the user’s
-     * saved diet preference (if any).
-     */
     fun searchRecipes(query: String) {
         currentQuery = query.trim()
-        val dietFilter = prefs.getDietQuery()    // e.g. "vegan" or null
+        val dietFilter = prefs.getDietQuery()
 
         _isLoading.value = true
         viewModelScope.launch {
@@ -52,20 +42,15 @@ class SearchViewModel(
                 )
                 _recipes.value = results
             } catch (e: Exception) {
-                _error.value = e.localizedMessage
+                _error.value = "Search failed: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    /**
-     * Perform a category-based search, automatically including the
-     * user’s saved diet preference.
-     */
     fun searchByCategory(category: String, number: Int = 10) {
         val dietFilter = prefs.getDietQuery()
-
         _isLoading.value = true
         viewModelScope.launch {
             try {
@@ -76,20 +61,14 @@ class SearchViewModel(
                 )
                 _recipes.value = results
             } catch (e: Exception) {
-                _error.value = e.localizedMessage
+                _error.value = "Category search failed: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    /**
-     * Re-run the last free-text search (useful if the user changes
-     * their diet preference and wants to refresh results).
-     */
     fun refreshLastSearch() {
-        if (currentQuery.isNotBlank()) {
-            searchRecipes(currentQuery)
-        }
+        if (currentQuery.isNotBlank()) searchRecipes(currentQuery)
     }
 }
