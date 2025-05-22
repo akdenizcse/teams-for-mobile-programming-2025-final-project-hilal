@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.recipes.R
@@ -34,6 +35,7 @@ import com.example.recipes.data.repository.RecipeRepository
 import com.example.recipes.databinding.FragmentRecipeDetailBinding
 import com.example.recipes.ui.adapters.CommentsAdapter
 import com.example.recipes.ui.adapters.IngredientsAdapter
+import com.example.recipes.ui.adapters.NutritionAdapter
 import com.example.recipes.viewmodel.FavoritesViewModel
 import com.example.recipes.viewmodel.ShoppingListViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -125,8 +127,11 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
             adapter = commentsAdapter
         }
 
+        // Nutrition popup trigger
+        binding.nutritionChip.setOnClickListener { showNutritionDialog() }
+
         binding.submitRatingButton.setOnClickListener { postCommentOrReply() }
-        binding.editReviewButton.setOnClickListener    { enterEditMode() }
+        binding.editReviewButton.setOnClickListener { enterEditMode() }
 
         // Back press
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -140,7 +145,24 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
         loadRecipeAndComments()
     }
 
-    private fun onToolbarItemSelected(item: MenuItem): Boolean {
+    private fun showNutritionDialog() {
+        val nutrients = loadedRecipe?.nutrition?.nutrients.orEmpty()
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_nutrition, null)
+        dialogView.findViewById<RecyclerView>(R.id.nutritionDialogRecycler).apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = NutritionAdapter(nutrients)
+        }
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.nutrition_facts)
+            .setView(dialogView)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
+
+
+private fun onToolbarItemSelected(item: MenuItem): Boolean {
         loadedRecipe?.let { recipe ->
             return when (item.itemId) {
                 R.id.action_favorite -> {
